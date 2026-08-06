@@ -1,0 +1,2740 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="4.0" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">
+    <edmx:Reference Uri="https://oasis-tcs.github.io/odata-vocabularies/vocabularies/Org.OData.Capabilities.V1.xml">
+        <edmx:Include Alias="Capabilities" Namespace="Org.OData.Capabilities.V1"/>
+    </edmx:Reference>
+    <edmx:Reference Uri="https://sap.github.io/odata-vocabularies/vocabularies/Common.xml">
+        <edmx:Include Alias="Common" Namespace="com.sap.vocabularies.Common.v1"/>
+    </edmx:Reference>
+    <edmx:Reference Uri="https://oasis-tcs.github.io/odata-vocabularies/vocabularies/Org.OData.Core.V1.xml">
+        <edmx:Include Alias="Core" Namespace="Org.OData.Core.V1"/>
+    </edmx:Reference>
+    <edmx:Reference Uri="https://oasis-tcs.github.io/odata-vocabularies/vocabularies/Org.OData.Measures.V1.xml">
+        <edmx:Include Alias="Measures" Namespace="Org.OData.Measures.V1"/>
+    </edmx:Reference>
+    <edmx:Reference Uri="https://sap.github.io/odata-vocabularies/vocabularies/UI.xml">
+        <edmx:Include Alias="UI" Namespace="com.sap.vocabularies.UI.v1"/>
+    </edmx:Reference>
+    <edmx:Reference Uri="https://oasis-tcs.github.io/odata-vocabularies/vocabularies/Org.OData.Validation.V1.xml">
+        <edmx:Include Alias="Validation" Namespace="Org.OData.Validation.V1"/>
+    </edmx:Reference>
+    <edmx:DataServices>
+        <Schema Namespace="FuelOrderService" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+            <Annotation Term="Core.Links">
+                <Collection>
+                    <Record>
+                        <PropertyValue Property="rel" String="author"/>
+                        <PropertyValue Property="href" String="https://cap.cloud.sap"/>
+                    </Record>
+                </Collection>
+            </Annotation>
+            <EntityContainer Name="EntityContainer">
+                <EntitySet Name="FuelOrders" EntityType="FuelOrderService.FuelOrders">
+                    <NavigationPropertyBinding Path="flight" Target="Flights"/>
+                    <NavigationPropertyBinding Path="airport" Target="Airports"/>
+                    <NavigationPropertyBinding Path="supplier" Target="Suppliers"/>
+                    <NavigationPropertyBinding Path="contract" Target="Contracts"/>
+                    <NavigationPropertyBinding Path="product" Target="Products"/>
+                    <NavigationPropertyBinding Path="uom" Target="UnitsOfMeasure"/>
+                    <NavigationPropertyBinding Path="currency" Target="Currencies"/>
+                    <NavigationPropertyBinding Path="deliveries" Target="FuelDeliveries"/>
+                    <NavigationPropertyBinding Path="tickets" Target="FuelTickets"/>
+                    <NavigationPropertyBinding Path="SiblingEntity" Target="FuelOrders"/>
+                </EntitySet>
+                <EntitySet Name="FuelDeliveries" EntityType="FuelOrderService.FuelDeliveries">
+                    <NavigationPropertyBinding Path="order" Target="FuelOrders"/>
+                    <NavigationPropertyBinding Path="SiblingEntity" Target="FuelDeliveries"/>
+                </EntitySet>
+                <EntitySet Name="FuelTickets" EntityType="FuelOrderService.FuelTickets">
+                    <NavigationPropertyBinding Path="order" Target="FuelOrders"/>
+                    <NavigationPropertyBinding Path="delivery" Target="FuelDeliveries"/>
+                    <NavigationPropertyBinding Path="SiblingEntity" Target="FuelTickets"/>
+                </EntitySet>
+                <EntitySet Name="Flights" EntityType="FuelOrderService.Flights">
+                    <NavigationPropertyBinding Path="aircraft" Target="Aircraft"/>
+                    <NavigationPropertyBinding Path="origin" Target="Airports"/>
+                    <NavigationPropertyBinding Path="destination" Target="Airports"/>
+                </EntitySet>
+                <EntitySet Name="Airports" EntityType="FuelOrderService.Airports">
+                    <NavigationPropertyBinding Path="country" Target="Countries"/>
+                    <NavigationPropertyBinding Path="plant" Target="Plants"/>
+                </EntitySet>
+                <EntitySet Name="Suppliers" EntityType="FuelOrderService.Suppliers">
+                    <NavigationPropertyBinding Path="country" Target="Countries"/>
+                </EntitySet>
+                <EntitySet Name="Contracts" EntityType="FuelOrderService.Contracts">
+                    <NavigationPropertyBinding Path="supplier" Target="Suppliers"/>
+                    <NavigationPropertyBinding Path="currency" Target="Currencies"/>
+                    <NavigationPropertyBinding Path="locations" Target="CONTRACT_LOCATIONS"/>
+                    <NavigationPropertyBinding Path="products" Target="CONTRACT_PRODUCTS"/>
+                </EntitySet>
+                <EntitySet Name="Products" EntityType="FuelOrderService.Products">
+                    <NavigationPropertyBinding Path="uom" Target="UnitsOfMeasure"/>
+                </EntitySet>
+                <EntitySet Name="Aircraft" EntityType="FuelOrderService.Aircraft">
+                    <NavigationPropertyBinding Path="manufacturer" Target="Manufacturers"/>
+                </EntitySet>
+                <EntitySet Name="Manufacturers" EntityType="FuelOrderService.Manufacturers"/>
+                <EntitySet Name="Countries" EntityType="FuelOrderService.Countries"/>
+                <EntitySet Name="Currencies" EntityType="FuelOrderService.Currencies"/>
+                <EntitySet Name="Plants" EntityType="FuelOrderService.Plants">
+                    <NavigationPropertyBinding Path="land1" Target="Countries"/>
+                </EntitySet>
+                <EntitySet Name="UnitsOfMeasure" EntityType="FuelOrderService.UnitsOfMeasure"/>
+                <EntitySet Name="StationLookup" EntityType="FuelOrderService.StationLookup"/>
+                <EntitySet Name="CONTRACT_LOCATIONS" EntityType="FuelOrderService.CONTRACT_LOCATIONS">
+                    <NavigationPropertyBinding Path="contract" Target="Contracts"/>
+                    <NavigationPropertyBinding Path="airport" Target="Airports"/>
+                </EntitySet>
+                <EntitySet Name="CONTRACT_PRODUCTS" EntityType="FuelOrderService.CONTRACT_PRODUCTS">
+                    <NavigationPropertyBinding Path="contract" Target="Contracts"/>
+                    <NavigationPropertyBinding Path="product" Target="Products"/>
+                </EntitySet>
+                <FunctionImport Name="generateOrderNumber" Function="FuelOrderService.generateOrderNumber"/>
+                <FunctionImport Name="generateDeliveryNumber" Function="FuelOrderService.generateDeliveryNumber"/>
+                <FunctionImport Name="getOrdersByStation" Function="FuelOrderService.getOrdersByStation"/>
+                <FunctionImport Name="getOrdersBySupplier" Function="FuelOrderService.getOrdersBySupplier"/>
+            </EntityContainer>
+            <EntityType Name="FuelOrders">
+                <Key>
+                    <PropertyRef Name="ID"/>
+                    <PropertyRef Name="IsActiveEntity"/>
+                </Key>
+                <Property Name="ID" Type="Edm.Guid" Nullable="false"/>
+                <Property Name="created_at" Type="Edm.DateTimeOffset"/>
+                <Property Name="created_by" Type="Edm.String" MaxLength="100"/>
+                <Property Name="modified_at" Type="Edm.DateTimeOffset"/>
+                <Property Name="modified_by" Type="Edm.String" MaxLength="100"/>
+                <Property Name="order_number" Type="Edm.String" MaxLength="25"/>
+                <NavigationProperty Name="flight" Type="FuelOrderService.Flights">
+                    <ReferentialConstraint Property="flight_ID" ReferencedProperty="ID"/>
+                </NavigationProperty>
+                <Property Name="flight_ID" Type="Edm.Guid"/>
+                <NavigationProperty Name="airport" Type="FuelOrderService.Airports">
+                    <ReferentialConstraint Property="airport_ID" ReferencedProperty="ID"/>
+                </NavigationProperty>
+                <Property Name="airport_ID" Type="Edm.Guid"/>
+                <Property Name="station_code" Type="Edm.String" MaxLength="3"/>
+                <NavigationProperty Name="supplier" Type="FuelOrderService.Suppliers">
+                    <ReferentialConstraint Property="supplier_ID" ReferencedProperty="ID"/>
+                </NavigationProperty>
+                <Property Name="supplier_ID" Type="Edm.Guid"/>
+                <NavigationProperty Name="contract" Type="FuelOrderService.Contracts">
+                    <ReferentialConstraint Property="contract_ID" ReferencedProperty="ID"/>
+                </NavigationProperty>
+                <Property Name="contract_ID" Type="Edm.Guid"/>
+                <NavigationProperty Name="product" Type="FuelOrderService.Products">
+                    <ReferentialConstraint Property="product_ID" ReferencedProperty="ID"/>
+                </NavigationProperty>
+                <Property Name="product_ID" Type="Edm.Guid"/>
+                <NavigationProperty Name="uom" Type="FuelOrderService.UnitsOfMeasure">
+                    <ReferentialConstraint Property="uom_code" ReferencedProperty="uom_code"/>
+                </NavigationProperty>
+                <Property Name="uom_code" Type="Edm.String" MaxLength="3" DefaultValue="KG"/>
+                <Property Name="ordered_quantity" Type="Edm.Decimal" Precision="12" Scale="2"/>
+                <Property Name="unit_price" Type="Edm.Decimal" Precision="15" Scale="4"/>
+                <Property Name="total_amount" Type="Edm.Decimal" Precision="15" Scale="2"/>
+                <NavigationProperty Name="currency" Type="FuelOrderService.Currencies">
+                    <ReferentialConstraint Property="currency_code" ReferencedProperty="currency_code"/>
+                </NavigationProperty>
+                <Property Name="currency_code" Type="Edm.String" MaxLength="3" DefaultValue="USD"/>
+                <Property Name="requested_date" Type="Edm.Date"/>
+                <Property Name="requested_time" Type="Edm.TimeOfDay"/>
+                <Property Name="priority" Type="Edm.String" MaxLength="10" DefaultValue="Normal"/>
+                <Property Name="status" Type="Edm.String" MaxLength="20" DefaultValue="Draft"/>
+                <Property Name="s4_po_number" Type="Edm.String" MaxLength="10"/>
+                <Property Name="s4_po_item" Type="Edm.String" MaxLength="5"/>
+                <Property Name="notes" Type="Edm.String" MaxLength="1000"/>
+                <Property Name="cancelled_reason" Type="Edm.String" MaxLength="500"/>
+                <Property Name="cancelled_by" Type="Edm.String" MaxLength="100"/>
+                <Property Name="cancelled_at" Type="Edm.DateTimeOffset"/>
+                <NavigationProperty Name="deliveries" Type="Collection(FuelOrderService.FuelDeliveries)" Partner="order">
+                    <OnDelete Action="Cascade"/>
+                </NavigationProperty>
+                <NavigationProperty Name="tickets" Type="Collection(FuelOrderService.FuelTickets)" Partner="order">
+                    <OnDelete Action="Cascade"/>
+                </NavigationProperty>
+                <Property Name="statusCriticality" Type="Edm.Int32"/>
+                <Property Name="priorityCriticality" Type="Edm.Int32"/>
+                <Property Name="IsActiveEntity" Type="Edm.Boolean" Nullable="false" DefaultValue="true"/>
+                <Property Name="HasActiveEntity" Type="Edm.Boolean" Nullable="false" DefaultValue="false"/>
+                <Property Name="HasDraftEntity" Type="Edm.Boolean" Nullable="false" DefaultValue="false"/>
+                <NavigationProperty Name="DraftAdministrativeData" Type="FuelOrderService.DraftAdministrativeData" ContainsTarget="true"/>
+                <NavigationProperty Name="SiblingEntity" Type="FuelOrderService.FuelOrders"/>
+            </EntityType>
+            <EntityType Name="FuelDeliveries">
+                <Key>
+                    <PropertyRef Name="ID"/>
+                    <PropertyRef Name="IsActiveEntity"/>
+                </Key>
+                <Property Name="ID" Type="Edm.Guid" Nullable="false"/>
+                <Property Name="created_at" Type="Edm.DateTimeOffset"/>
+                <Property Name="created_by" Type="Edm.String" MaxLength="100"/>
+                <Property Name="modified_at" Type="Edm.DateTimeOffset"/>
+                <Property Name="modified_by" Type="Edm.String" MaxLength="100"/>
+                <NavigationProperty Name="order" Type="FuelOrderService.FuelOrders" Partner="deliveries">
+                    <ReferentialConstraint Property="order_ID" ReferencedProperty="ID"/>
+                </NavigationProperty>
+                <Property Name="order_ID" Type="Edm.Guid"/>
+                <Property Name="delivery_number" Type="Edm.String" MaxLength="25"/>
+                <Property Name="delivery_date" Type="Edm.Date"/>
+                <Property Name="delivery_time" Type="Edm.TimeOfDay"/>
+                <Property Name="delivered_quantity" Type="Edm.Decimal" Precision="12" Scale="2"/>
+                <Property Name="temperature" Type="Edm.Decimal" Precision="5" Scale="2"/>
+                <Property Name="density" Type="Edm.Decimal" Precision="8" Scale="4"/>
+                <Property Name="temperature_corrected_qty" Type="Edm.Decimal" Precision="12" Scale="2"/>
+                <Property Name="vehicle_id" Type="Edm.String" MaxLength="20"/>
+                <Property Name="driver_name" Type="Edm.String" MaxLength="100"/>
+                <Property Name="pilot_signature" Type="Edm.Binary"/>
+                <Property Name="pilot_name" Type="Edm.String" MaxLength="100"/>
+                <Property Name="ground_crew_signature" Type="Edm.Binary"/>
+                <Property Name="ground_crew_name" Type="Edm.String" MaxLength="100"/>
+                <Property Name="signature_timestamp" Type="Edm.DateTimeOffset" Precision="7"/>
+                <Property Name="signature_location" Type="Edm.String" MaxLength="100"/>
+                <Property Name="s4_gr_number" Type="Edm.String" MaxLength="10"/>
+                <Property Name="s4_gr_year" Type="Edm.String" MaxLength="4"/>
+                <Property Name="s4_gr_item" Type="Edm.String" MaxLength="4"/>
+                <Property Name="status" Type="Edm.String" MaxLength="20" DefaultValue="Pending"/>
+                <Property Name="quantity_variance" Type="Edm.Decimal" Precision="12" Scale="2"/>
+                <Property Name="variance_percentage" Type="Edm.Decimal" Precision="5" Scale="2"/>
+                <Property Name="variance_flag" Type="Edm.Boolean" DefaultValue="false"/>
+                <Property Name="variance_reason" Type="Edm.String" MaxLength="500"/>
+                <Property Name="statusCriticality" Type="Edm.Int32"/>
+                <Property Name="varianceCriticality" Type="Edm.Int32"/>
+                <Property Name="IsActiveEntity" Type="Edm.Boolean" Nullable="false" DefaultValue="true"/>
+                <Property Name="HasActiveEntity" Type="Edm.Boolean" Nullable="false" DefaultValue="false"/>
+                <Property Name="HasDraftEntity" Type="Edm.Boolean" Nullable="false" DefaultValue="false"/>
+                <NavigationProperty Name="DraftAdministrativeData" Type="FuelOrderService.DraftAdministrativeData" ContainsTarget="true"/>
+                <NavigationProperty Name="SiblingEntity" Type="FuelOrderService.FuelDeliveries"/>
+            </EntityType>
+            <EntityType Name="FuelTickets">
+                <Key>
+                    <PropertyRef Name="ID"/>
+                    <PropertyRef Name="IsActiveEntity"/>
+                </Key>
+                <Property Name="ID" Type="Edm.Guid" Nullable="false"/>
+                <Property Name="created_at" Type="Edm.DateTimeOffset"/>
+                <Property Name="created_by" Type="Edm.String" MaxLength="100"/>
+                <Property Name="modified_at" Type="Edm.DateTimeOffset"/>
+                <Property Name="modified_by" Type="Edm.String" MaxLength="100"/>
+                <NavigationProperty Name="order" Type="FuelOrderService.FuelOrders" Partner="tickets">
+                    <ReferentialConstraint Property="order_ID" ReferencedProperty="ID"/>
+                </NavigationProperty>
+                <Property Name="order_ID" Type="Edm.Guid"/>
+                <NavigationProperty Name="delivery" Type="FuelOrderService.FuelDeliveries">
+                    <ReferentialConstraint Property="delivery_ID" ReferencedProperty="ID"/>
+                </NavigationProperty>
+                <Property Name="delivery_ID" Type="Edm.Guid"/>
+                <Property Name="ticket_number" Type="Edm.String" MaxLength="50"/>
+                <Property Name="internal_number" Type="Edm.String" MaxLength="25"/>
+                <Property Name="aircraft_reg" Type="Edm.String" MaxLength="10"/>
+                <Property Name="flight_number" Type="Edm.String" MaxLength="10"/>
+                <Property Name="quantity" Type="Edm.Decimal" Precision="15" Scale="2"/>
+                <Property Name="uom_code" Type="Edm.String" MaxLength="3" DefaultValue="KG"/>
+                <Property Name="delivery_timestamp" Type="Edm.DateTimeOffset"/>
+                <Property Name="supplier_ticket_ref" Type="Edm.String" MaxLength="50"/>
+                <Property Name="status" Type="Edm.String" MaxLength="20" DefaultValue="Open"/>
+                <Property Name="verified_by" Type="Edm.String" MaxLength="100"/>
+                <Property Name="verified_at" Type="Edm.DateTimeOffset"/>
+                <Property Name="IsActiveEntity" Type="Edm.Boolean" Nullable="false" DefaultValue="true"/>
+                <Property Name="HasActiveEntity" Type="Edm.Boolean" Nullable="false" DefaultValue="false"/>
+                <Property Name="HasDraftEntity" Type="Edm.Boolean" Nullable="false" DefaultValue="false"/>
+                <NavigationProperty Name="DraftAdministrativeData" Type="FuelOrderService.DraftAdministrativeData" ContainsTarget="true"/>
+                <NavigationProperty Name="SiblingEntity" Type="FuelOrderService.FuelTickets"/>
+            </EntityType>
+            <EntityType Name="Flights">
+                <Key>
+                    <PropertyRef Name="ID"/>
+                </Key>
+                <Property Name="ID" Type="Edm.Guid" Nullable="false"/>
+                <Property Name="created_at" Type="Edm.DateTimeOffset"/>
+                <Property Name="created_by" Type="Edm.String" MaxLength="100"/>
+                <Property Name="modified_at" Type="Edm.DateTimeOffset"/>
+                <Property Name="modified_by" Type="Edm.String" MaxLength="100"/>
+                <Property Name="flight_number" Type="Edm.String" MaxLength="10"/>
+                <Property Name="flight_date" Type="Edm.Date"/>
+                <NavigationProperty Name="aircraft" Type="FuelOrderService.Aircraft">
+                    <ReferentialConstraint Property="aircraft_type" ReferencedProperty="type_code"/>
+                </NavigationProperty>
+                <Property Name="aircraft_type" Type="Edm.String" MaxLength="10"/>
+                <Property Name="aircraft_reg" Type="Edm.String" MaxLength="10"/>
+                <NavigationProperty Name="origin" Type="FuelOrderService.Airports"/>
+                <Property Name="origin_airport" Type="Edm.String" MaxLength="3"/>
+                <NavigationProperty Name="destination" Type="FuelOrderService.Airports"/>
+                <Property Name="destination_airport" Type="Edm.String" MaxLength="3"/>
+                <Property Name="scheduled_departure" Type="Edm.TimeOfDay"/>
+                <Property Name="scheduled_arrival" Type="Edm.TimeOfDay"/>
+                <Property Name="status" Type="Edm.String" MaxLength="20" DefaultValue="SCHEDULED"/>
+            </EntityType>
+            <EntityType Name="Airports">
+                <Key>
+                    <PropertyRef Name="ID"/>
+                </Key>
+                <Property Name="ID" Type="Edm.Guid" Nullable="false"/>
+                <Property Name="is_active" Type="Edm.Boolean" DefaultValue="true"/>
+                <Property Name="created_at" Type="Edm.DateTimeOffset"/>
+                <Property Name="created_by" Type="Edm.String" MaxLength="100"/>
+                <Property Name="modified_at" Type="Edm.DateTimeOffset"/>
+                <Property Name="modified_by" Type="Edm.String" MaxLength="100"/>
+                <Property Name="iata_code" Type="Edm.String" MaxLength="3"/>
+                <Property Name="icao_code" Type="Edm.String" MaxLength="4"/>
+                <Property Name="airport_name" Type="Edm.String" MaxLength="100"/>
+                <Property Name="city" Type="Edm.String" MaxLength="50"/>
+                <NavigationProperty Name="country" Type="FuelOrderService.Countries">
+                    <ReferentialConstraint Property="country_code" ReferencedProperty="land1"/>
+                </NavigationProperty>
+                <Property Name="country_code" Type="Edm.String" MaxLength="3"/>
+                <Property Name="timezone" Type="Edm.String" MaxLength="50"/>
+                <NavigationProperty Name="plant" Type="FuelOrderService.Plants">
+                    <ReferentialConstraint Property="s4_plant_code" ReferencedProperty="werks"/>
+                </NavigationProperty>
+                <Property Name="s4_plant_code" Type="Edm.String" MaxLength="4"/>
+            </EntityType>
+            <EntityType Name="Suppliers">
+                <Key>
+                    <PropertyRef Name="ID"/>
+                </Key>
+                <Property Name="ID" Type="Edm.Guid" Nullable="false"/>
+                <Property Name="is_active" Type="Edm.Boolean" DefaultValue="true"/>
+                <Property Name="created_at" Type="Edm.DateTimeOffset"/>
+                <Property Name="created_by" Type="Edm.String" MaxLength="100"/>
+                <Property Name="modified_at" Type="Edm.DateTimeOffset"/>
+                <Property Name="modified_by" Type="Edm.String" MaxLength="100"/>
+                <Property Name="supplier_code" Type="Edm.String" MaxLength="20"/>
+                <Property Name="supplier_name" Type="Edm.String" MaxLength="100"/>
+                <Property Name="supplier_type" Type="Edm.String" MaxLength="20"/>
+                <NavigationProperty Name="country" Type="FuelOrderService.Countries">
+                    <ReferentialConstraint Property="country_code" ReferencedProperty="land1"/>
+                </NavigationProperty>
+                <Property Name="country_code" Type="Edm.String" MaxLength="3"/>
+                <Property Name="payment_terms" Type="Edm.String" MaxLength="20"/>
+                <Property Name="s4_vendor_no" Type="Edm.String" MaxLength="10"/>
+            </EntityType>
+            <EntityType Name="Contracts">
+                <Key>
+                    <PropertyRef Name="ID"/>
+                </Key>
+                <Property Name="ID" Type="Edm.Guid" Nullable="false"/>
+                <Property Name="is_active" Type="Edm.Boolean" DefaultValue="true"/>
+                <Property Name="created_at" Type="Edm.DateTimeOffset"/>
+                <Property Name="created_by" Type="Edm.String" MaxLength="100"/>
+                <Property Name="modified_at" Type="Edm.DateTimeOffset"/>
+                <Property Name="modified_by" Type="Edm.String" MaxLength="100"/>
+                <Property Name="contract_number" Type="Edm.String" MaxLength="20"/>
+                <Property Name="contract_name" Type="Edm.String" MaxLength="100"/>
+                <NavigationProperty Name="supplier" Type="FuelOrderService.Suppliers">
+                    <ReferentialConstraint Property="supplier_ID" ReferencedProperty="ID"/>
+                </NavigationProperty>
+                <Property Name="supplier_ID" Type="Edm.Guid"/>
+                <Property Name="valid_from" Type="Edm.Date"/>
+                <Property Name="valid_to" Type="Edm.Date"/>
+                <Property Name="contract_type" Type="Edm.String" MaxLength="20"/>
+                <Property Name="price_type" Type="Edm.String" MaxLength="20"/>
+                <NavigationProperty Name="currency" Type="FuelOrderService.Currencies">
+                    <ReferentialConstraint Property="currency_code" ReferencedProperty="currency_code"/>
+                </NavigationProperty>
+                <Property Name="currency_code" Type="Edm.String" MaxLength="3"/>
+                <Property Name="payment_terms" Type="Edm.String" MaxLength="20"/>
+                <Property Name="incoterms" Type="Edm.String" MaxLength="10"/>
+                <Property Name="min_volume_kg" Type="Edm.Decimal" Precision="15" Scale="2"/>
+                <Property Name="max_volume_kg" Type="Edm.Decimal" Precision="15" Scale="2"/>
+                <Property Name="s4_contract_number" Type="Edm.String" MaxLength="10"/>
+                <NavigationProperty Name="locations" Type="Collection(FuelOrderService.CONTRACT_LOCATIONS)" Partner="contract">
+                    <OnDelete Action="Cascade"/>
+                </NavigationProperty>
+                <NavigationProperty Name="products" Type="Collection(FuelOrderService.CONTRACT_PRODUCTS)" Partner="contract">
+                    <OnDelete Action="Cascade"/>
+                </NavigationProperty>
+            </EntityType>
+            <EntityType Name="Products">
+                <Key>
+                    <PropertyRef Name="ID"/>
+                </Key>
+                <Property Name="ID" Type="Edm.Guid" Nullable="false"/>
+                <Property Name="is_active" Type="Edm.Boolean" DefaultValue="true"/>
+                <Property Name="created_at" Type="Edm.DateTimeOffset"/>
+                <Property Name="created_by" Type="Edm.String" MaxLength="100"/>
+                <Property Name="modified_at" Type="Edm.DateTimeOffset"/>
+                <Property Name="modified_by" Type="Edm.String" MaxLength="100"/>
+                <Property Name="product_code" Type="Edm.String" MaxLength="20"/>
+                <Property Name="product_name" Type="Edm.String" MaxLength="100"/>
+                <Property Name="product_type" Type="Edm.String" MaxLength="20"/>
+                <Property Name="specification" Type="Edm.String" MaxLength="50"/>
+                <NavigationProperty Name="uom" Type="FuelOrderService.UnitsOfMeasure">
+                    <ReferentialConstraint Property="uom_code" ReferencedProperty="uom_code"/>
+                </NavigationProperty>
+                <Property Name="uom_code" Type="Edm.String" MaxLength="3"/>
+                <Property Name="s4_material_number" Type="Edm.String" MaxLength="18"/>
+            </EntityType>
+            <EntityType Name="Aircraft">
+                <Key>
+                    <PropertyRef Name="type_code"/>
+                </Key>
+                <Property Name="is_active" Type="Edm.Boolean" DefaultValue="true"/>
+                <Property Name="created_at" Type="Edm.DateTimeOffset"/>
+                <Property Name="created_by" Type="Edm.String" MaxLength="100"/>
+                <Property Name="modified_at" Type="Edm.DateTimeOffset"/>
+                <Property Name="modified_by" Type="Edm.String" MaxLength="100"/>
+                <Property Name="type_code" Type="Edm.String" MaxLength="10" Nullable="false"/>
+                <Property Name="aircraft_model" Type="Edm.String" MaxLength="50"/>
+                <NavigationProperty Name="manufacturer" Type="FuelOrderService.Manufacturers">
+                    <ReferentialConstraint Property="manufacturer_code" ReferencedProperty="manufacture_code"/>
+                </NavigationProperty>
+                <Property Name="manufacturer_code" Type="Edm.String" MaxLength="2"/>
+                <Property Name="fuel_capacity_kg" Type="Edm.Decimal" Precision="15" Scale="2"/>
+                <Property Name="mtow_kg" Type="Edm.Decimal" Precision="15" Scale="2"/>
+                <Property Name="cruise_burn_kgph" Type="Edm.Decimal" Precision="10" Scale="2"/>
+                <Property Name="fleet_size" Type="Edm.Int32"/>
+                <Property Name="status" Type="Edm.String" MaxLength="20" DefaultValue="ACTIVE"/>
+            </EntityType>
+            <EntityType Name="Manufacturers">
+                <Key>
+                    <PropertyRef Name="manufacture_code"/>
+                </Key>
+                <Property Name="is_active" Type="Edm.Boolean" DefaultValue="true"/>
+                <Property Name="created_at" Type="Edm.DateTimeOffset"/>
+                <Property Name="created_by" Type="Edm.String" MaxLength="100"/>
+                <Property Name="modified_at" Type="Edm.DateTimeOffset"/>
+                <Property Name="modified_by" Type="Edm.String" MaxLength="100"/>
+                <Property Name="manufacture_code" Type="Edm.String" MaxLength="2" Nullable="false"/>
+                <Property Name="manufacture_name" Type="Edm.String" MaxLength="100"/>
+            </EntityType>
+            <EntityType Name="Countries">
+                <Key>
+                    <PropertyRef Name="land1"/>
+                </Key>
+                <Property Name="is_active" Type="Edm.Boolean" DefaultValue="true"/>
+                <Property Name="land1" Type="Edm.String" MaxLength="3" Nullable="false"/>
+                <Property Name="landx" Type="Edm.String" MaxLength="50"/>
+                <Property Name="landx50" Type="Edm.String" MaxLength="100"/>
+                <Property Name="natio" Type="Edm.String" MaxLength="15"/>
+                <Property Name="landgr" Type="Edm.String" MaxLength="3"/>
+                <Property Name="currcode" Type="Edm.String" MaxLength="3"/>
+                <Property Name="spras" Type="Edm.String" MaxLength="2"/>
+                <Property Name="is_embargoed" Type="Edm.Boolean" DefaultValue="false"/>
+                <Property Name="embargo_effective_date" Type="Edm.Date"/>
+                <Property Name="embargo_reason" Type="Edm.String" MaxLength="500"/>
+                <Property Name="sanction_programs" Type="Edm.String" MaxLength="200"/>
+                <Property Name="risk_level" Type="Edm.String" MaxLength="10"/>
+            </EntityType>
+            <EntityType Name="Currencies">
+                <Key>
+                    <PropertyRef Name="currency_code"/>
+                </Key>
+                <Property Name="is_active" Type="Edm.Boolean" DefaultValue="true"/>
+                <Property Name="currency_code" Type="Edm.String" MaxLength="3" Nullable="false"/>
+                <Property Name="currency_name" Type="Edm.String" MaxLength="50"/>
+                <Property Name="decimal_places" Type="Edm.Int32"/>
+                <Property Name="symbol" Type="Edm.String" MaxLength="5"/>
+            </EntityType>
+            <EntityType Name="Plants">
+                <Key>
+                    <PropertyRef Name="werks"/>
+                </Key>
+                <Property Name="is_active" Type="Edm.Boolean" DefaultValue="true"/>
+                <Property Name="werks" Type="Edm.String" MaxLength="4" Nullable="false"/>
+                <Property Name="name1" Type="Edm.String" MaxLength="30"/>
+                <Property Name="stras" Type="Edm.String" MaxLength="100"/>
+                <Property Name="ort01" Type="Edm.String" MaxLength="50"/>
+                <NavigationProperty Name="land1" Type="FuelOrderService.Countries">
+                    <ReferentialConstraint Property="land1_land1" ReferencedProperty="land1"/>
+                </NavigationProperty>
+                <Property Name="land1_land1" Type="Edm.String" MaxLength="3"/>
+                <Property Name="regio" Type="Edm.String" MaxLength="3"/>
+                <Property Name="pstlz" Type="Edm.String" MaxLength="10"/>
+                <Property Name="spras" Type="Edm.String" MaxLength="2"/>
+            </EntityType>
+            <EntityType Name="UnitsOfMeasure">
+                <Key>
+                    <PropertyRef Name="uom_code"/>
+                </Key>
+                <Property Name="is_active" Type="Edm.Boolean" DefaultValue="true"/>
+                <Property Name="uom_code" Type="Edm.String" MaxLength="3" Nullable="false"/>
+                <Property Name="uom_name" Type="Edm.String" MaxLength="50"/>
+                <Property Name="uom_category" Type="Edm.String" MaxLength="20"/>
+                <Property Name="conversion_to_kg" Type="Edm.Decimal" Precision="15" Scale="6"/>
+            </EntityType>
+            <EntityType Name="StationLookup">
+                <Key>
+                    <PropertyRef Name="station_code"/>
+                    <PropertyRef Name="product_ID"/>
+                    <PropertyRef Name="contract_ID"/>
+                </Key>
+                <Property Name="station_code" Type="Edm.String" MaxLength="3" Nullable="false"/>
+                <Property Name="product_ID" Type="Edm.Guid" Nullable="false"/>
+                <Property Name="contract_ID" Type="Edm.Guid" Nullable="false"/>
+                <Property Name="airport_ID" Type="Edm.Guid"/>
+                <Property Name="supplier_ID" Type="Edm.Guid"/>
+                <Property Name="airport_name" Type="Edm.String" MaxLength="100"/>
+                <Property Name="supplier_name" Type="Edm.String" MaxLength="100"/>
+                <Property Name="supplier_type" Type="Edm.String" MaxLength="20"/>
+                <Property Name="contract_number" Type="Edm.String" MaxLength="20"/>
+                <Property Name="product_name" Type="Edm.String" MaxLength="100"/>
+                <Property Name="specification" Type="Edm.String" MaxLength="50"/>
+            </EntityType>
+            <EntityType Name="CONTRACT_LOCATIONS">
+                <Key>
+                    <PropertyRef Name="ID"/>
+                </Key>
+                <Property Name="ID" Type="Edm.Guid" Nullable="false"/>
+                <Property Name="is_active" Type="Edm.Boolean" DefaultValue="true"/>
+                <Property Name="created_at" Type="Edm.DateTimeOffset"/>
+                <Property Name="created_by" Type="Edm.String" MaxLength="100"/>
+                <Property Name="modified_at" Type="Edm.DateTimeOffset"/>
+                <Property Name="modified_by" Type="Edm.String" MaxLength="100"/>
+                <NavigationProperty Name="contract" Type="FuelOrderService.Contracts" Partner="locations">
+                    <ReferentialConstraint Property="contract_ID" ReferencedProperty="ID"/>
+                </NavigationProperty>
+                <Property Name="contract_ID" Type="Edm.Guid"/>
+                <NavigationProperty Name="airport" Type="FuelOrderService.Airports">
+                    <ReferentialConstraint Property="airport_ID" ReferencedProperty="ID"/>
+                </NavigationProperty>
+                <Property Name="airport_ID" Type="Edm.Guid"/>
+                <Property Name="plant_code" Type="Edm.String" MaxLength="4"/>
+                <Property Name="location_type" Type="Edm.String" MaxLength="20" DefaultValue="PRIMARY"/>
+                <Property Name="location_premium" Type="Edm.Decimal" Precision="15" Scale="4"/>
+                <Property Name="priority" Type="Edm.Int32" DefaultValue="1"/>
+                <Property Name="valid_from" Type="Edm.Date"/>
+                <Property Name="valid_to" Type="Edm.Date"/>
+            </EntityType>
+            <EntityType Name="CONTRACT_PRODUCTS">
+                <Key>
+                    <PropertyRef Name="ID"/>
+                </Key>
+                <Property Name="ID" Type="Edm.Guid" Nullable="false"/>
+                <Property Name="is_active" Type="Edm.Boolean" DefaultValue="true"/>
+                <Property Name="created_at" Type="Edm.DateTimeOffset"/>
+                <Property Name="created_by" Type="Edm.String" MaxLength="100"/>
+                <Property Name="modified_at" Type="Edm.DateTimeOffset"/>
+                <Property Name="modified_by" Type="Edm.String" MaxLength="100"/>
+                <NavigationProperty Name="contract" Type="FuelOrderService.Contracts" Partner="products">
+                    <ReferentialConstraint Property="contract_ID" ReferencedProperty="ID"/>
+                </NavigationProperty>
+                <Property Name="contract_ID" Type="Edm.Guid"/>
+                <NavigationProperty Name="product" Type="FuelOrderService.Products">
+                    <ReferentialConstraint Property="product_ID" ReferencedProperty="ID"/>
+                </NavigationProperty>
+                <Property Name="product_ID" Type="Edm.Guid"/>
+                <Property Name="product_premium" Type="Edm.Decimal" Precision="15" Scale="4"/>
+                <Property Name="min_quantity" Type="Edm.Decimal" Precision="15" Scale="2"/>
+                <Property Name="max_quantity" Type="Edm.Decimal" Precision="15" Scale="2"/>
+                <Property Name="is_default" Type="Edm.Boolean" DefaultValue="false"/>
+            </EntityType>
+            <EntityType Name="DraftAdministrativeData">
+                <Key>
+                    <PropertyRef Name="DraftUUID"/>
+                </Key>
+                <Property Name="DraftUUID" Type="Edm.Guid" Nullable="false"/>
+                <Property Name="CreationDateTime" Type="Edm.DateTimeOffset" Precision="7"/>
+                <Property Name="CreatedByUser" Type="Edm.String" MaxLength="256"/>
+                <Property Name="DraftIsCreatedByMe" Type="Edm.Boolean"/>
+                <Property Name="LastChangeDateTime" Type="Edm.DateTimeOffset" Precision="7"/>
+                <Property Name="LastChangedByUser" Type="Edm.String" MaxLength="256"/>
+                <Property Name="InProcessByUser" Type="Edm.String" MaxLength="256"/>
+                <Property Name="DraftIsProcessedByMe" Type="Edm.Boolean"/>
+            </EntityType>
+            <ComplexType Name="PricingResult">
+                <Property Name="unitPrice" Type="Edm.Decimal" Precision="15" Scale="4"/>
+                <Property Name="currency" Type="Edm.String" MaxLength="3"/>
+                <Property Name="cpeIndex" Type="Edm.Decimal" Precision="10" Scale="4"/>
+                <Property Name="effectiveDate" Type="Edm.Date"/>
+                <Property Name="contractNumber" Type="Edm.String" MaxLength="20"/>
+                <Property Name="priceType" Type="Edm.String" MaxLength="20"/>
+            </ComplexType>
+            <ComplexType Name="SignatureResult">
+                <Property Name="success" Type="Edm.Boolean"/>
+                <Property Name="deliveryNumber" Type="Edm.String" MaxLength="25"/>
+                <Property Name="s4PONumber" Type="Edm.String" MaxLength="10"/>
+                <Property Name="s4GRNumber" Type="Edm.String" MaxLength="10"/>
+                <Property Name="orderStatus" Type="Edm.String" MaxLength="20"/>
+                <Property Name="message" Type="Edm.String" MaxLength="500"/>
+            </ComplexType>
+            <ComplexType Name="OrderSummary">
+                <Property Name="totalOrders" Type="Edm.Int32"/>
+                <Property Name="totalQuantity" Type="Edm.Decimal" Precision="15" Scale="2"/>
+                <Property Name="totalAmount" Type="Edm.Decimal" Precision="15" Scale="2"/>
+                <Property Name="currency" Type="Edm.String" MaxLength="3"/>
+                <Property Name="byStatus" Type="Collection(FuelOrderService.StatusCount)" Nullable="true"/>
+                <Property Name="byPriority" Type="Collection(FuelOrderService.PriorityCount)" Nullable="true"/>
+            </ComplexType>
+            <ComplexType Name="StatusCount">
+                <Property Name="status" Type="Edm.String" MaxLength="20"/>
+                <Property Name="count" Type="Edm.Int32"/>
+                <Property Name="amount" Type="Edm.Decimal" Precision="15" Scale="2"/>
+            </ComplexType>
+            <ComplexType Name="PriorityCount">
+                <Property Name="priority" Type="Edm.String" MaxLength="10"/>
+                <Property Name="count" Type="Edm.Int32"/>
+            </ComplexType>
+            <ComplexType Name="TemperatureCorrectionResult">
+                <Property Name="success" Type="Edm.Boolean"/>
+                <Property Name="deliveryNumber" Type="Edm.String" MaxLength="25"/>
+                <Property Name="measuredQuantity" Type="Edm.Decimal" Precision="12" Scale="2"/>
+                <Property Name="measuredTemperature" Type="Edm.Decimal" Precision="5" Scale="2"/>
+                <Property Name="measuredDensity" Type="Edm.Decimal" Precision="8" Scale="4"/>
+                <Property Name="correctionFactor" Type="Edm.Decimal" Precision="8" Scale="6"/>
+                <Property Name="correctedQuantity" Type="Edm.Decimal" Precision="12" Scale="2"/>
+                <Property Name="referenceTemperature" Type="Edm.Decimal" Precision="5" Scale="2"/>
+                <Property Name="message" Type="Edm.String" MaxLength="500"/>
+            </ComplexType>
+            <ComplexType Name="DeliveryValidationResult">
+                <Property Name="isValid" Type="Edm.Boolean"/>
+                <Property Name="deliveryNumber" Type="Edm.String" MaxLength="25"/>
+                <Property Name="errors" Type="Collection(FuelOrderService.ValidationError)" Nullable="true"/>
+                <Property Name="warnings" Type="Collection(FuelOrderService.ValidationError)" Nullable="true"/>
+            </ComplexType>
+            <ComplexType Name="ValidationError">
+                <Property Name="code" Type="Edm.String" MaxLength="10"/>
+                <Property Name="field" Type="Edm.String" MaxLength="50"/>
+                <Property Name="message" Type="Edm.String" MaxLength="500"/>
+                <Property Name="severity" Type="Edm.String" MaxLength="10"/>
+            </ComplexType>
+            <Action Name="submit" IsBound="true" EntitySetPath="in">
+                <Parameter Name="in" Type="FuelOrderService.FuelOrders"/>
+                <ReturnType Type="FuelOrderService.FuelOrders"/>
+            </Action>
+            <Action Name="confirm" IsBound="true" EntitySetPath="in">
+                <Parameter Name="in" Type="FuelOrderService.FuelOrders"/>
+                <ReturnType Type="FuelOrderService.FuelOrders"/>
+            </Action>
+            <Action Name="startDelivery" IsBound="true" EntitySetPath="in">
+                <Parameter Name="in" Type="FuelOrderService.FuelOrders"/>
+                <ReturnType Type="FuelOrderService.FuelOrders"/>
+            </Action>
+            <Action Name="cancel" IsBound="true" EntitySetPath="in">
+                <Parameter Name="in" Type="FuelOrderService.FuelOrders"/>
+                <Parameter Name="reason" Type="Edm.String"/>
+                <ReturnType Type="FuelOrderService.FuelOrders"/>
+            </Action>
+            <Function Name="calculatePrice" IsBound="true" IsComposable="false">
+                <Parameter Name="in" Type="FuelOrderService.FuelOrders"/>
+                <ReturnType Type="FuelOrderService.PricingResult"/>
+            </Function>
+            <Action Name="draftPrepare" IsBound="true" EntitySetPath="in">
+                <Parameter Name="in" Type="FuelOrderService.FuelOrders"/>
+                <Parameter Name="SideEffectsQualifier" Type="Edm.String"/>
+                <ReturnType Type="FuelOrderService.FuelOrders"/>
+            </Action>
+            <Action Name="draftPrepare" IsBound="true" EntitySetPath="in">
+                <Parameter Name="in" Type="FuelOrderService.FuelDeliveries"/>
+                <Parameter Name="SideEffectsQualifier" Type="Edm.String"/>
+                <ReturnType Type="FuelOrderService.FuelDeliveries"/>
+            </Action>
+            <Action Name="draftPrepare" IsBound="true" EntitySetPath="in">
+                <Parameter Name="in" Type="FuelOrderService.FuelTickets"/>
+                <Parameter Name="SideEffectsQualifier" Type="Edm.String"/>
+                <ReturnType Type="FuelOrderService.FuelTickets"/>
+            </Action>
+            <Action Name="draftActivate" IsBound="true" EntitySetPath="in">
+                <Parameter Name="in" Type="FuelOrderService.FuelOrders"/>
+                <ReturnType Type="FuelOrderService.FuelOrders"/>
+            </Action>
+            <Action Name="draftEdit" IsBound="true" EntitySetPath="in">
+                <Parameter Name="in" Type="FuelOrderService.FuelOrders"/>
+                <Parameter Name="PreserveChanges" Type="Edm.Boolean"/>
+                <ReturnType Type="FuelOrderService.FuelOrders"/>
+            </Action>
+            <Action Name="captureSignatures" IsBound="true">
+                <Parameter Name="in" Type="FuelOrderService.FuelDeliveries"/>
+                <Parameter Name="pilotName" Type="Edm.String"/>
+                <Parameter Name="pilotSignature" Type="Edm.Binary"/>
+                <Parameter Name="groundCrewName" Type="Edm.String"/>
+                <Parameter Name="groundCrewSignature" Type="Edm.Binary"/>
+                <Parameter Name="signatureLocation" Type="Edm.String"/>
+                <ReturnType Type="FuelOrderService.SignatureResult"/>
+            </Action>
+            <Action Name="verifyQuantity" IsBound="true" EntitySetPath="in">
+                <Parameter Name="in" Type="FuelOrderService.FuelDeliveries"/>
+                <ReturnType Type="FuelOrderService.FuelDeliveries"/>
+            </Action>
+            <Action Name="dispute" IsBound="true" EntitySetPath="in">
+                <Parameter Name="in" Type="FuelOrderService.FuelDeliveries"/>
+                <Parameter Name="reason" Type="Edm.String"/>
+                <ReturnType Type="FuelOrderService.FuelDeliveries"/>
+            </Action>
+            <Action Name="calculateTemperatureCorrection" IsBound="true">
+                <Parameter Name="in" Type="FuelOrderService.FuelDeliveries"/>
+                <ReturnType Type="FuelOrderService.TemperatureCorrectionResult"/>
+            </Action>
+            <Action Name="validateDelivery" IsBound="true">
+                <Parameter Name="in" Type="FuelOrderService.FuelDeliveries"/>
+                <ReturnType Type="FuelOrderService.DeliveryValidationResult"/>
+            </Action>
+            <Action Name="attachToDelivery" IsBound="true" EntitySetPath="in">
+                <Parameter Name="in" Type="FuelOrderService.FuelTickets"/>
+                <Parameter Name="deliveryId" Type="Edm.Guid"/>
+                <ReturnType Type="FuelOrderService.FuelTickets"/>
+            </Action>
+            <Action Name="verify" IsBound="true" EntitySetPath="in">
+                <Parameter Name="in" Type="FuelOrderService.FuelTickets"/>
+                <ReturnType Type="FuelOrderService.FuelTickets"/>
+            </Action>
+            <Function Name="generateOrderNumber" IsBound="false" IsComposable="false">
+                <Parameter Name="stationCode" Type="Edm.String"/>
+                <Parameter Name="orderDate" Type="Edm.Date"/>
+                <ReturnType Type="Edm.String"/>
+            </Function>
+            <Function Name="generateDeliveryNumber" IsBound="false" IsComposable="false">
+                <Parameter Name="stationCode" Type="Edm.String"/>
+                <Parameter Name="deliveryDate" Type="Edm.Date"/>
+                <ReturnType Type="Edm.String"/>
+            </Function>
+            <Function Name="getOrdersByStation" IsBound="false" IsComposable="false">
+                <Parameter Name="stationCode" Type="Edm.String"/>
+                <Parameter Name="fromDate" Type="Edm.Date"/>
+                <Parameter Name="toDate" Type="Edm.Date"/>
+                <ReturnType Type="FuelOrderService.OrderSummary"/>
+            </Function>
+            <Function Name="getOrdersBySupplier" IsBound="false" IsComposable="false">
+                <Parameter Name="supplierId" Type="Edm.Guid"/>
+                <Parameter Name="fromDate" Type="Edm.Date"/>
+                <Parameter Name="toDate" Type="Edm.Date"/>
+                <ReturnType Type="FuelOrderService.OrderSummary"/>
+            </Function>
+            <Annotations Target="FuelOrderService.FuelOrders">
+                <Annotation Term="UI.HeaderInfo">
+                    <Record Type="UI.HeaderInfoType">
+                        <PropertyValue Property="TypeName" String="Fuel Order"/>
+                        <PropertyValue Property="TypeNamePlural" String="Fuel Orders"/>
+                        <PropertyValue Property="Title">
+                            <Record Type="UI.DataField">
+                                <PropertyValue Property="Value" Path="order_number"/>
+                            </Record>
+                        </PropertyValue>
+                        <PropertyValue Property="Description">
+                            <Record Type="UI.DataField">
+                                <PropertyValue Property="Value" Path="station_code"/>
+                            </Record>
+                        </PropertyValue>
+                        <PropertyValue Property="ImageUrl" String="sap-icon://shipping-status"/>
+                    </Record>
+                </Annotation>
+                <Annotation Term="UI.SelectionFields">
+                    <Collection>
+                        <PropertyPath>station_code</PropertyPath>
+                        <PropertyPath>supplier_ID</PropertyPath>
+                        <PropertyPath>status</PropertyPath>
+                        <PropertyPath>priority</PropertyPath>
+                        <PropertyPath>requested_date</PropertyPath>
+                        <PropertyPath>product_ID</PropertyPath>
+                    </Collection>
+                </Annotation>
+                <Annotation Term="UI.LineItem">
+                    <Collection>
+                        <Record Type="UI.DataField">
+                            <PropertyValue Property="Value" Path="order_number"/>
+                            <PropertyValue Property="Label" String="Order Number"/>
+                            <Annotation Term="UI.Importance" EnumMember="UI.ImportanceType/High"/>
+                        </Record>
+                        <Record Type="UI.DataField">
+                            <PropertyValue Property="Value" Path="requested_date"/>
+                            <PropertyValue Property="Label" String="Order Date"/>
+                            <Annotation Term="UI.Importance" EnumMember="UI.ImportanceType/High"/>
+                        </Record>
+                        <Record Type="UI.DataField">
+                            <PropertyValue Property="Value" Path="station_code"/>
+                            <PropertyValue Property="Label" String="Station"/>
+                            <Annotation Term="UI.Importance" EnumMember="UI.ImportanceType/High"/>
+                        </Record>
+                        <Record Type="UI.DataField">
+                            <PropertyValue Property="Value" Path="supplier/supplier_name"/>
+                            <PropertyValue Property="Label" String="Supplier"/>
+                            <Annotation Term="UI.Importance" EnumMember="UI.ImportanceType/High"/>
+                        </Record>
+                        <Record Type="UI.DataField">
+                            <PropertyValue Property="Value" Path="product/product_name"/>
+                            <PropertyValue Property="Label" String="Fuel Type"/>
+                            <Annotation Term="UI.Importance" EnumMember="UI.ImportanceType/Medium"/>
+                        </Record>
+                        <Record Type="UI.DataField">
+                            <PropertyValue Property="Value" Path="ordered_quantity"/>
+                            <PropertyValue Property="Label" String="Quantity (kg)"/>
+                            <Annotation Term="UI.Importance" EnumMember="UI.ImportanceType/High"/>
+                        </Record>
+                        <Record Type="UI.DataField">
+                            <PropertyValue Property="Value" Path="status"/>
+                            <PropertyValue Property="Label" String="Status"/>
+                            <PropertyValue Property="Criticality" Path="statusCriticality"/>
+                            <Annotation Term="UI.Importance" EnumMember="UI.ImportanceType/High"/>
+                        </Record>
+                        <Record Type="UI.DataField">
+                            <PropertyValue Property="Value" Path="total_amount"/>
+                            <PropertyValue Property="Label" String="Total Amount"/>
+                            <Annotation Term="UI.Importance" EnumMember="UI.ImportanceType/Medium"/>
+                        </Record>
+                        <Record Type="UI.DataField">
+                            <PropertyValue Property="Value" Path="currency_code"/>
+                            <PropertyValue Property="Label" String="Currency"/>
+                            <Annotation Term="UI.Importance" EnumMember="UI.ImportanceType/Low"/>
+                        </Record>
+                        <Record Type="UI.DataField">
+                            <PropertyValue Property="Value" Path="priority"/>
+                            <PropertyValue Property="Label" String="Priority"/>
+                            <PropertyValue Property="Criticality" Path="priorityCriticality"/>
+                            <Annotation Term="UI.Importance" EnumMember="UI.ImportanceType/Medium"/>
+                        </Record>
+                        <Record Type="UI.DataField">
+                            <PropertyValue Property="Value" Path="s4_po_number"/>
+                            <PropertyValue Property="Label" String="PO Number"/>
+                            <Annotation Term="UI.Importance" EnumMember="UI.ImportanceType/Low"/>
+                        </Record>
+                    </Collection>
+                </Annotation>
+                <Annotation Term="UI.PresentationVariant">
+                    <Record Type="UI.PresentationVariantType">
+                        <PropertyValue Property="SortOrder">
+                            <Collection>
+                                <Record Type="Common.SortOrderType">
+                                    <PropertyValue Property="Property" PropertyPath="requested_date"/>
+                                    <PropertyValue Property="Descending" Bool="true"/>
+                                </Record>
+                                <Record Type="Common.SortOrderType">
+                                    <PropertyValue Property="Property" PropertyPath="order_number"/>
+                                    <PropertyValue Property="Descending" Bool="true"/>
+                                </Record>
+                            </Collection>
+                        </PropertyValue>
+                        <PropertyValue Property="Visualizations">
+                            <Collection>
+                                <AnnotationPath>@UI.LineItem</AnnotationPath>
+                            </Collection>
+                        </PropertyValue>
+                    </Record>
+                </Annotation>
+                <Annotation Term="UI.HeaderFacets">
+                    <Collection>
+                        <Record Type="UI.ReferenceFacet">
+                            <PropertyValue Property="Target" AnnotationPath="@UI.FieldGroup#OrderStatus"/>
+                            <PropertyValue Property="Label" String="Status"/>
+                        </Record>
+                        <Record Type="UI.ReferenceFacet">
+                            <PropertyValue Property="Target" AnnotationPath="@UI.FieldGroup#OrderQuantity"/>
+                            <PropertyValue Property="Label" String="Quantity"/>
+                        </Record>
+                        <Record Type="UI.ReferenceFacet">
+                            <PropertyValue Property="Target" AnnotationPath="@UI.FieldGroup#OrderAmount"/>
+                            <PropertyValue Property="Label" String="Amount"/>
+                        </Record>
+                    </Collection>
+                </Annotation>
+                <Annotation Term="UI.FieldGroup" Qualifier="OrderStatus">
+                    <Record Type="UI.FieldGroupType">
+                        <PropertyValue Property="Label" String="Status"/>
+                        <PropertyValue Property="Data">
+                            <Collection>
+                                <Record Type="UI.DataField">
+                                    <PropertyValue Property="Value" Path="status"/>
+                                    <PropertyValue Property="Criticality" Path="statusCriticality"/>
+                                </Record>
+                                <Record Type="UI.DataField">
+                                    <PropertyValue Property="Value" Path="priority"/>
+                                    <PropertyValue Property="Criticality" Path="priorityCriticality"/>
+                                </Record>
+                            </Collection>
+                        </PropertyValue>
+                    </Record>
+                </Annotation>
+                <Annotation Term="UI.FieldGroup" Qualifier="OrderQuantity">
+                    <Record Type="UI.FieldGroupType">
+                        <PropertyValue Property="Label" String="Quantity"/>
+                        <PropertyValue Property="Data">
+                            <Collection>
+                                <Record Type="UI.DataField">
+                                    <PropertyValue Property="Value" Path="ordered_quantity"/>
+                                    <PropertyValue Property="Label" String="Ordered (kg)"/>
+                                </Record>
+                                <Record Type="UI.DataField">
+                                    <PropertyValue Property="Value" Path="uom_code"/>
+                                    <PropertyValue Property="Label" String="UoM"/>
+                                </Record>
+                            </Collection>
+                        </PropertyValue>
+                    </Record>
+                </Annotation>
+                <Annotation Term="UI.FieldGroup" Qualifier="OrderAmount">
+                    <Record Type="UI.FieldGroupType">
+                        <PropertyValue Property="Label" String="Amount"/>
+                        <PropertyValue Property="Data">
+                            <Collection>
+                                <Record Type="UI.DataField">
+                                    <PropertyValue Property="Value" Path="total_amount"/>
+                                    <PropertyValue Property="Label" String="Total"/>
+                                </Record>
+                                <Record Type="UI.DataField">
+                                    <PropertyValue Property="Value" Path="currency_code"/>
+                                    <PropertyValue Property="Label" String="Currency"/>
+                                </Record>
+                            </Collection>
+                        </PropertyValue>
+                    </Record>
+                </Annotation>
+                <Annotation Term="UI.Facets">
+                    <Collection>
+                        <Record Type="UI.ReferenceFacet">
+                            <PropertyValue Property="Target" AnnotationPath="@UI.FieldGroup#OrderDetails"/>
+                            <PropertyValue Property="Label" String="Order Details"/>
+                        </Record>
+                        <Record Type="UI.ReferenceFacet">
+                            <PropertyValue Property="Target" AnnotationPath="@UI.FieldGroup#StationSupplier"/>
+                            <PropertyValue Property="Label" String="Station &amp; Supplier"/>
+                        </Record>
+                        <Record Type="UI.ReferenceFacet">
+                            <PropertyValue Property="Target" AnnotationPath="@UI.FieldGroup#QuantityPricing"/>
+                            <PropertyValue Property="Label" String="Quantity &amp; Pricing"/>
+                        </Record>
+                        <Record Type="UI.ReferenceFacet">
+                            <PropertyValue Property="Target" AnnotationPath="@UI.FieldGroup#S4References"/>
+                            <PropertyValue Property="Label" String="S/4HANA References"/>
+                        </Record>
+                        <Record Type="UI.ReferenceFacet">
+                            <PropertyValue Property="Target" AnnotationPath="deliveries/@UI.LineItem"/>
+                            <PropertyValue Property="Label" String="Deliveries (ePOD)"/>
+                        </Record>
+                        <Record Type="UI.ReferenceFacet">
+                            <PropertyValue Property="Target" AnnotationPath="tickets/@UI.LineItem"/>
+                            <PropertyValue Property="Label" String="Fuel Tickets"/>
+                        </Record>
+                        <Record Type="UI.ReferenceFacet">
+                            <PropertyValue Property="Target" AnnotationPath="@UI.FieldGroup#Administrative"/>
+                            <PropertyValue Property="Label" String="Administrative"/>
+                        </Record>
+                    </Collection>
+                </Annotation>
+                <Annotation Term="UI.FieldGroup" Qualifier="OrderDetails">
+                    <Record Type="UI.FieldGroupType">
+                        <PropertyValue Property="Label" String="Order Details"/>
+                        <PropertyValue Property="Data">
+                            <Collection>
+                                <Record Type="UI.DataField">
+                                    <PropertyValue Property="Value" Path="order_number"/>
+                                    <PropertyValue Property="Label" String="Order Number"/>
+                                </Record>
+                                <Record Type="UI.DataField">
+                                    <PropertyValue Property="Value" Path="requested_date"/>
+                                    <PropertyValue Property="Label" String="Requested Date"/>
+                                </Record>
+                                <Record Type="UI.DataField">
+                                    <PropertyValue Property="Value" Path="requested_time"/>
+                                    <PropertyValue Property="Label" String="Requested Time"/>
+                                </Record>
+                                <Record Type="UI.DataField">
+                                    <PropertyValue Property="Value" Path="flight_ID"/>
+                                    <PropertyValue Property="Label" String="Flight"/>
+                                </Record>
+                                <Record Type="UI.DataField">
+                                    <PropertyValue Property="Value" Path="priority"/>
+                                    <PropertyValue Property="Label" String="Priority"/>
+                                </Record>
+                                <Record Type="UI.DataField">
+                                    <PropertyValue Property="Value" Path="status"/>
+                                    <PropertyValue Property="Label" String="Status"/>
+                                </Record>
+                                <Record Type="UI.DataField">
+                                    <PropertyValue Property="Value" Path="notes"/>
+                                    <PropertyValue Property="Label" String="Notes"/>
+                                </Record>
+                            </Collection>
+                        </PropertyValue>
+                    </Record>
+                </Annotation>
+                <Annotation Term="UI.FieldGroup" Qualifier="StationSupplier">
+                    <Record Type="UI.FieldGroupType">
+                        <PropertyValue Property="Label" String="Station &amp; Supplier"/>
+                        <PropertyValue Property="Data">
+                            <Collection>
+                                <Record Type="UI.DataField">
+                                    <PropertyValue Property="Value" Path="station_code"/>
+                                    <PropertyValue Property="Label" String="Station Code"/>
+                                </Record>
+                                <Record Type="UI.DataField">
+                                    <PropertyValue Property="Value" Path="airport/airport_name"/>
+                                    <PropertyValue Property="Label" String="Airport"/>
+                                </Record>
+                                <Record Type="UI.DataField">
+                                    <PropertyValue Property="Value" Path="supplier/supplier_name"/>
+                                    <PropertyValue Property="Label" String="Supplier"/>
+                                </Record>
+                                <Record Type="UI.DataField">
+                                    <PropertyValue Property="Value" Path="supplier/supplier_type"/>
+                                    <PropertyValue Property="Label" String="Supplier Type"/>
+                                </Record>
+                                <Record Type="UI.DataField">
+                                    <PropertyValue Property="Value" Path="contract/contract_number"/>
+                                    <PropertyValue Property="Label" String="Contract"/>
+                                </Record>
+                            </Collection>
+                        </PropertyValue>
+                    </Record>
+                </Annotation>
+                <Annotation Term="UI.FieldGroup" Qualifier="QuantityPricing">
+                    <Record Type="UI.FieldGroupType">
+                        <PropertyValue Property="Label" String="Quantity &amp; Pricing"/>
+                        <PropertyValue Property="Data">
+                            <Collection>
+                                <Record Type="UI.DataField">
+                                    <PropertyValue Property="Value" Path="product/product_name"/>
+                                    <PropertyValue Property="Label" String="Fuel Product"/>
+                                </Record>
+                                <Record Type="UI.DataField">
+                                    <PropertyValue Property="Value" Path="product/specification"/>
+                                    <PropertyValue Property="Label" String="Specification"/>
+                                </Record>
+                                <Record Type="UI.DataField">
+                                    <PropertyValue Property="Value" Path="ordered_quantity"/>
+                                    <PropertyValue Property="Label" String="Ordered Quantity"/>
+                                </Record>
+                                <Record Type="UI.DataField">
+                                    <PropertyValue Property="Value" Path="uom_code"/>
+                                    <PropertyValue Property="Label" String="Unit of Measure"/>
+                                </Record>
+                                <Record Type="UI.DataField">
+                                    <PropertyValue Property="Value" Path="unit_price"/>
+                                    <PropertyValue Property="Label" String="Unit Price"/>
+                                </Record>
+                                <Record Type="UI.DataField">
+                                    <PropertyValue Property="Value" Path="total_amount"/>
+                                    <PropertyValue Property="Label" String="Total Amount"/>
+                                </Record>
+                                <Record Type="UI.DataField">
+                                    <PropertyValue Property="Value" Path="currency_code"/>
+                                    <PropertyValue Property="Label" String="Currency"/>
+                                </Record>
+                            </Collection>
+                        </PropertyValue>
+                    </Record>
+                </Annotation>
+                <Annotation Term="UI.FieldGroup" Qualifier="S4References">
+                    <Record Type="UI.FieldGroupType">
+                        <PropertyValue Property="Label" String="S/4HANA References"/>
+                        <PropertyValue Property="Data">
+                            <Collection>
+                                <Record Type="UI.DataField">
+                                    <PropertyValue Property="Value" Path="s4_po_number"/>
+                                    <PropertyValue Property="Label" String="Purchase Order"/>
+                                </Record>
+                                <Record Type="UI.DataField">
+                                    <PropertyValue Property="Value" Path="s4_po_item"/>
+                                    <PropertyValue Property="Label" String="PO Item"/>
+                                </Record>
+                            </Collection>
+                        </PropertyValue>
+                    </Record>
+                </Annotation>
+                <Annotation Term="UI.FieldGroup" Qualifier="Administrative">
+                    <Record Type="UI.FieldGroupType">
+                        <PropertyValue Property="Label" String="Administrative"/>
+                        <PropertyValue Property="Data">
+                            <Collection>
+                                <Record Type="UI.DataField">
+                                    <PropertyValue Property="Value" Path="created_at"/>
+                                    <PropertyValue Property="Label" String="Created At"/>
+                                </Record>
+                                <Record Type="UI.DataField">
+                                    <PropertyValue Property="Value" Path="created_by"/>
+                                    <PropertyValue Property="Label" String="Created By"/>
+                                </Record>
+                                <Record Type="UI.DataField">
+                                    <PropertyValue Property="Value" Path="modified_at"/>
+                                    <PropertyValue Property="Label" String="Modified At"/>
+                                </Record>
+                                <Record Type="UI.DataField">
+                                    <PropertyValue Property="Value" Path="modified_by"/>
+                                    <PropertyValue Property="Label" String="Modified By"/>
+                                </Record>
+                                <Record Type="UI.DataField">
+                                    <PropertyValue Property="Value" Path="cancelled_reason"/>
+                                    <PropertyValue Property="Label" String="Cancellation Reason"/>
+                                </Record>
+                                <Record Type="UI.DataField">
+                                    <PropertyValue Property="Value" Path="cancelled_by"/>
+                                    <PropertyValue Property="Label" String="Cancelled By"/>
+                                </Record>
+                                <Record Type="UI.DataField">
+                                    <PropertyValue Property="Value" Path="cancelled_at"/>
+                                    <PropertyValue Property="Label" String="Cancelled At"/>
+                                </Record>
+                            </Collection>
+                        </PropertyValue>
+                    </Record>
+                </Annotation>
+                <Annotation Term="Common.SideEffects" Qualifier="StationChanged">
+                    <Record Type="Common.SideEffectsType">
+                        <PropertyValue Property="SourceProperties">
+                            <Collection>
+                                <PropertyPath>station_code</PropertyPath>
+                            </Collection>
+                        </PropertyValue>
+                        <PropertyValue Property="TargetEntities">
+                            <Collection>
+                                <NavigationPropertyPath>airport</NavigationPropertyPath>
+                                <NavigationPropertyPath>supplier</NavigationPropertyPath>
+                                <NavigationPropertyPath>contract</NavigationPropertyPath>
+                                <NavigationPropertyPath>product</NavigationPropertyPath>
+                            </Collection>
+                        </PropertyValue>
+                    </Record>
+                </Annotation>
+            </Annotations>
+            <Annotations Target="FuelOrderService.EntityContainer/FuelOrders">
+                <Annotation Term="UI.PresentationVariant">
+                    <Record Type="UI.PresentationVariantType">
+                        <PropertyValue Property="SortOrder">
+                            <Collection>
+                                <Record Type="Common.SortOrderType">
+                                    <PropertyValue Property="Property" PropertyPath="requested_date"/>
+                                    <PropertyValue Property="Descending" Bool="true"/>
+                                </Record>
+                                <Record Type="Common.SortOrderType">
+                                    <PropertyValue Property="Property" PropertyPath="order_number"/>
+                                    <PropertyValue Property="Descending" Bool="true"/>
+                                </Record>
+                            </Collection>
+                        </PropertyValue>
+                        <PropertyValue Property="Visualizations">
+                            <Collection>
+                                <AnnotationPath>@UI.LineItem</AnnotationPath>
+                            </Collection>
+                        </PropertyValue>
+                    </Record>
+                </Annotation>
+                <Annotation Term="Common.SideEffects" Qualifier="StationChanged">
+                    <Record Type="Common.SideEffectsType">
+                        <PropertyValue Property="SourceProperties">
+                            <Collection>
+                                <PropertyPath>station_code</PropertyPath>
+                            </Collection>
+                        </PropertyValue>
+                        <PropertyValue Property="TargetEntities">
+                            <Collection>
+                                <NavigationPropertyPath>airport</NavigationPropertyPath>
+                                <NavigationPropertyPath>supplier</NavigationPropertyPath>
+                                <NavigationPropertyPath>contract</NavigationPropertyPath>
+                                <NavigationPropertyPath>product</NavigationPropertyPath>
+                            </Collection>
+                        </PropertyValue>
+                    </Record>
+                </Annotation>
+                <Annotation Term="Common.DraftRoot">
+                    <Record Type="Common.DraftRootType">
+                        <PropertyValue Property="ActivationAction" String="FuelOrderService.draftActivate"/>
+                        <PropertyValue Property="EditAction" String="FuelOrderService.draftEdit"/>
+                        <PropertyValue Property="PreparationAction" String="FuelOrderService.draftPrepare"/>
+                    </Record>
+                </Annotation>
+            </Annotations>
+            <Annotations Target="FuelOrderService.FuelOrders/ID">
+                <Annotation Term="UI.Hidden" Bool="true"/>
+                <Annotation Term="Core.ComputedDefaultValue" Bool="true"/>
+            </Annotations>
+            <Annotations Target="FuelOrderService.FuelOrders/created_at">
+                <Annotation Term="Common.FieldControl" EnumMember="Common.FieldControlType/ReadOnly"/>
+                <Annotation Term="Common.Label" String="Created At"/>
+                <Annotation Term="Core.Computed" Bool="true"/>
+            </Annotations>
+            <Annotations Target="FuelOrderService.FuelOrders/created_by">
+                <Annotation Term="Common.FieldControl" EnumMember="Common.FieldControlType/ReadOnly"/>
+                <Annotation Term="Common.Label" String="Created By"/>
+                <Annotation Term="Core.Computed" Bool="true"/>
+            </Annotations>
+            <Annotations Target="FuelOrderService.FuelOrders/modified_at">
+                <Annotation Term="Common.FieldControl" EnumMember="Common.FieldControlType/ReadOnly"/>
+                <Annotation Term="Common.Label" String="Modified At"/>
+                <Annotation Term="Core.Computed" Bool="true"/>
+            </Annotations>
+            <Annotations Target="FuelOrderService.FuelOrders/modified_by">
+                <Annotation Term="Common.FieldControl" EnumMember="Common.FieldControlType/ReadOnly"/>
+                <Annotation Term="Common.Label" String="Modified By"/>
+                <Annotation Term="Core.Computed" Bool="true"/>
+            </Annotations>
+            <Annotations Target="FuelOrderService.FuelOrders/order_number">
+                <Annotation Term="Common.FieldControl" EnumMember="Common.FieldControlType/ReadOnly"/>
+                <Annotation Term="Common.Label" String="Order Number"/>
+            </Annotations>
+            <Annotations Target="FuelOrderService.FuelOrders/flight_ID">
+                <Annotation Term="Common.Text" Path="flight/flight_number">
+                    <Annotation Term="UI.TextArrangement" EnumMember="UI.TextArrangementType/TextFirst"/>
+                </Annotation>
+                <Annotation Term="Common.ValueList">
+                    <Record Type="Common.ValueListType">
+                        <PropertyValue Property="Label" String="Flights"/>
+                        <PropertyValue Property="CollectionPath" String="Flights"/>
+                        <PropertyValue Property="Parameters">
+                            <Collection>
+                                <Record Type="Common.ValueListParameterInOut">
+                                    <PropertyValue Property="LocalDataProperty" PropertyPath="flight_ID"/>
+                                    <PropertyValue Property="ValueListProperty" String="ID"/>
+                                </Record>
+                                <Record Type="Common.ValueListParameterDisplayOnly">
+                                    <PropertyValue Property="ValueListProperty" String="flight_number"/>
+                                </Record>
+                                <Record Type="Common.ValueListParameterDisplayOnly">
+                                    <PropertyValue Property="ValueListProperty" String="flight_date"/>
+                                </Record>
+                                <Record Type="Common.ValueListParameterDisplayOnly">
+                                    <PropertyValue Property="ValueListProperty" String="origin_airport"/>
+                                </Record>
+                                <Record Type="Common.ValueListParameterDisplayOnly">
+                                    <PropertyValue Property="ValueListProperty" String="destination_airport"/>
+                                </Record>
+                            </Collection>
+                        </PropertyValue>
+                    </Record>
+                </Annotation>
+            </Annotations>
+            <Annotations Target="FuelOrderService.FuelOrders/airport_ID">
+                <Annotation Term="Common.Text" Path="airport/airport_name">
+                    <Annotation Term="UI.TextArrangement" EnumMember="UI.TextArrangementType/TextFirst"/>
+                </Annotation>
+                <Annotation Term="Common.ValueList">
+                    <Record Type="Common.ValueListType">
+                        <PropertyValue Property="Label" String="Airports"/>
+                        <PropertyValue Property="CollectionPath" String="Airports"/>
+                        <PropertyValue Property="Parameters">
+                            <Collection>
+                                <Record Type="Common.ValueListParameterInOut">
+                                    <PropertyValue Property="LocalDataProperty" PropertyPath="airport_ID"/>
+                                    <PropertyValue Property="ValueListProperty" String="ID"/>
+                                </Record>
+                                <Record Type="Common.ValueListParameterDisplayOnly">
+                                    <PropertyValue Property="ValueListProperty" String="iata_code"/>
+                                </Record>
+                                <Record Type="Common.ValueListParameterDisplayOnly">
+                                    <PropertyValue Property="ValueListProperty" String="airport_name"/>
+                                </Record>
+                                <Record Type="Common.ValueListParameterDisplayOnly">
+                                    <PropertyValue Property="ValueListProperty" String="city"/>
+                                </Record>
+                            </Collection>
+                        </PropertyValue>
+                    </Record>
+                </Annotation>
+            </Annotations>
+            <Annotations Target="FuelOrderService.FuelOrders/station_code">
+                <Annotation Term="Common.ValueList">
+                    <Record Type="Common.ValueListType">
+                        <PropertyValue Property="CollectionPath" String="StationLookup"/>
+                        <PropertyValue Property="Parameters">
+                            <Collection>
+                                <Record Type="Common.ValueListParameterInOut">
+                                    <PropertyValue Property="LocalDataProperty" PropertyPath="station_code"/>
+                                    <PropertyValue Property="ValueListProperty" String="station_code"/>
+                                </Record>
+                                <Record Type="Common.ValueListParameterOut">
+                                    <PropertyValue Property="LocalDataProperty" PropertyPath="airport_ID"/>
+                                    <PropertyValue Property="ValueListProperty" String="airport_ID"/>
+                                </Record>
+                                <Record Type="Common.ValueListParameterOut">
+                                    <PropertyValue Property="LocalDataProperty" PropertyPath="supplier_ID"/>
+                                    <PropertyValue Property="ValueListProperty" String="supplier_ID"/>
+                                </Record>
+                                <Record Type="Common.ValueListParameterOut">
+                                    <PropertyValue Property="LocalDataProperty" PropertyPath="contract_ID"/>
+                                    <PropertyValue Property="ValueListProperty" String="contract_ID"/>
+                                </Record>
+                                <Record Type="Common.ValueListParameterOut">
+                                    <PropertyValue Property="LocalDataProperty" PropertyPath="product_ID"/>
+                                    <PropertyValue Property="ValueListProperty" String="product_ID"/>
+                                </Record>
+                                <Record Type="Common.ValueListParameterDisplayOnly">
+                                    <PropertyValue Property="ValueListProperty" String="airport_name"/>
+                                </Record>
+                                <Record Type="Common.ValueListParameterDisplayOnly">
+                                    <PropertyValue Property="ValueListProperty" String="contract_number"/>
+                                </Record>
+                                <Record Type="Common.ValueListParameterDisplayOnly">
+                                    <PropertyValue Property="ValueListProperty" String="supplier_name"/>
+                                </Record>
+                                <Record Type="Common.ValueListParameterDisplayOnly">
+                                    <PropertyValue Property="ValueListProperty" String="product_name"/>
+                                </Record>
+                            </Collection>
+                        </PropertyValue>
+                    </Record>
+                </Annotation>
+                <Annotation Term="Common.Label" String="Station"/>
+                <Annotation Term="Common.FieldControl" EnumMember="Common.FieldControlType/Mandatory"/>
+            </Annotations>
+            <Annotations Target="FuelOrderService.FuelOrders/supplier_ID">
+                <Annotation Term="Common.Text" Path="supplier/supplier_name">
+                    <Annotation Term="UI.TextArrangement" EnumMember="UI.TextArrangementType/TextFirst"/>
+                </Annotation>
+                <Annotation Term="Common.ValueList">
+                    <Record Type="Common.ValueListType">
+                        <PropertyValue Property="Label" String="Suppliers"/>
+                        <PropertyValue Property="CollectionPath" String="Suppliers"/>
+                        <PropertyValue Property="Parameters">
+                            <Collection>
+                                <Record Type="Common.ValueListParameterInOut">
+                                    <PropertyValue Property="LocalDataProperty" PropertyPath="supplier_ID"/>
+                                    <PropertyValue Property="ValueListProperty" String="ID"/>
+                                </Record>
+                                <Record Type="Common.ValueListParameterDisplayOnly">
+                                    <PropertyValue Property="ValueListProperty" String="supplier_code"/>
+                                </Record>
+                                <Record Type="Common.ValueListParameterDisplayOnly">
+                                    <PropertyValue Property="ValueListProperty" String="supplier_name"/>
+                                </Record>
+                                <Record Type="Common.ValueListParameterDisplayOnly">
+                                    <PropertyValue Property="ValueListProperty" String="supplier_type"/>
+                                </Record>
+                            </Collection>
+                        </PropertyValue>
+                    </Record>
+                </Annotation>
+            </Annotations>
+            <Annotations Target="FuelOrderService.FuelOrders/contract_ID">
+                <Annotation Term="Common.Text" Path="contract/contract_number">
+                    <Annotation Term="UI.TextArrangement" EnumMember="UI.TextArrangementType/TextFirst"/>
+                </Annotation>
+                <Annotation Term="Common.ValueList">
+                    <Record Type="Common.ValueListType">
+                        <PropertyValue Property="Label" String="Contracts"/>
+                        <PropertyValue Property="CollectionPath" String="Contracts"/>
+                        <PropertyValue Property="Parameters">
+                            <Collection>
+                                <Record Type="Common.ValueListParameterInOut">
+                                    <PropertyValue Property="LocalDataProperty" PropertyPath="contract_ID"/>
+                                    <PropertyValue Property="ValueListProperty" String="ID"/>
+                                </Record>
+                                <Record Type="Common.ValueListParameterDisplayOnly">
+                                    <PropertyValue Property="ValueListProperty" String="contract_number"/>
+                                </Record>
+                                <Record Type="Common.ValueListParameterDisplayOnly">
+                                    <PropertyValue Property="ValueListProperty" String="contract_name"/>
+                                </Record>
+                                <Record Type="Common.ValueListParameterDisplayOnly">
+                                    <PropertyValue Property="ValueListProperty" String="valid_from"/>
+                                </Record>
+                                <Record Type="Common.ValueListParameterDisplayOnly">
+                                    <PropertyValue Property="ValueListProperty" String="valid_to"/>
+                                </Record>
+                            </Collection>
+                        </PropertyValue>
+                    </Record>
+                </Annotation>
+            </Annotations>
+            <Annotations Target="FuelOrderService.FuelOrders/product_ID">
+                <Annotation Term="Common.Text" Path="product/product_name">
+                    <Annotation Term="UI.TextArrangement" EnumMember="UI.TextArrangementType/TextFirst"/>
+                </Annotation>
+                <Annotation Term="Common.ValueList">
+                    <Record Type="Common.ValueListType">
+                        <PropertyValue Property="Label" String="Products"/>
+                        <PropertyValue Property="CollectionPath" String="Products"/>
+                        <PropertyValue Property="Parameters">
+                            <Collection>
+                                <Record Type="Common.ValueListParameterInOut">
+                                    <PropertyValue Property="LocalDataProperty" PropertyPath="product_ID"/>
+                                    <PropertyValue Property="ValueListProperty" String="ID"/>
+                                </Record>
+                                <Record Type="Common.ValueListParameterDisplayOnly">
+                                    <PropertyValue Property="ValueListProperty" String="product_code"/>
+                                </Record>
+                                <Record Type="Common.ValueListParameterDisplayOnly">
+                                    <PropertyValue Property="ValueListProperty" String="product_name"/>
+                                </Record>
+                                <Record Type="Common.ValueListParameterDisplayOnly">
+                                    <PropertyValue Property="ValueListProperty" String="product_type"/>
+                                </Record>
+                            </Collection>
+                        </PropertyValue>
+                    </Record>
+                </Annotation>
+            </Annotations>
+            <Annotations Target="FuelOrderService.FuelOrders/uom_code">
+                <Annotation Term="Common.Text" Path="uom/uom_name"/>
+                <Annotation Term="Common.ValueList">
+                    <Record Type="Common.ValueListType">
+                        <PropertyValue Property="CollectionPath" String="UnitsOfMeasure"/>
+                        <PropertyValue Property="Parameters">
+                            <Collection>
+                                <Record Type="Common.ValueListParameterInOut">
+                                    <PropertyValue Property="LocalDataProperty" PropertyPath="uom_code"/>
+                                    <PropertyValue Property="ValueListProperty" String="uom_code"/>
+                                </Record>
+                                <Record Type="Common.ValueListParameterDisplayOnly">
+                                    <PropertyValue Property="ValueListProperty" String="uom_name"/>
+                                </Record>
+                            </Collection>
+                        </PropertyValue>
+                    </Record>
+                </Annotation>
+                <Annotation Term="Common.Label" String="UoM"/>
+            </Annotations>
+            <Annotations Target="FuelOrderService.FuelOrders/ordered_quantity">
+                <Annotation Term="Measures.Unit" Path="uom_code"/>
+                <Annotation Term="Common.Label" String="Quantity (kg)"/>
+                <Annotation Term="Common.FieldControl" EnumMember="Common.FieldControlType/Mandatory"/>
+            </Annotations>
+            <Annotations Target="FuelOrderService.FuelOrders/unit_price">
+                <Annotation Term="Measures.ISOCurrency" Path="currency_code"/>
+                <Annotation Term="Common.Label" String="Unit Price"/>
+            </Annotations>
+            <Annotations Target="FuelOrderService.FuelOrders/total_amount">
+                <Annotation Term="Measures.ISOCurrency" Path="currency_code"/>
+                <Annotation Term="Common.Label" String="Total Amount"/>
+            </Annotations>
+            <Annotations Target="FuelOrderService.FuelOrders/currency_code">
+                <Annotation Term="Common.Text" Path="currency/currency_name">
+                    <Annotation Term="UI.TextArrangement" EnumMember="UI.TextArrangementType/TextFirst"/>
+                </Annotation>
+                <Annotation Term="Common.ValueList">
+                    <Record Type="Common.ValueListType">
+                        <PropertyValue Property="CollectionPath" String="Currencies"/>
+                        <PropertyValue Property="Parameters">
+                            <Collection>
+                                <Record Type="Common.ValueListParameterInOut">
+                                    <PropertyValue Property="LocalDataProperty" PropertyPath="currency_code"/>
+                                    <PropertyValue Property="ValueListProperty" String="currency_code"/>
+                                </Record>
+                                <Record Type="Common.ValueListParameterDisplayOnly">
+                                    <PropertyValue Property="ValueListProperty" String="currency_name"/>
+                                </Record>
+                                <Record Type="Common.ValueListParameterDisplayOnly">
+                                    <PropertyValue Property="ValueListProperty" String="symbol"/>
+                                </Record>
+                            </Collection>
+                        </PropertyValue>
+                    </Record>
+                </Annotation>
+                <Annotation Term="Common.Label" String="Currency"/>
+            </Annotations>
+            <Annotations Target="FuelOrderService.FuelOrders/requested_date">
+                <Annotation Term="Common.Label" String="Delivery Date"/>
+                <Annotation Term="Common.FieldControl" EnumMember="Common.FieldControlType/Mandatory"/>
+            </Annotations>
+            <Annotations Target="FuelOrderService.FuelOrders/requested_time">
+                <Annotation Term="Common.Label" String="Delivery Time"/>
+            </Annotations>
+            <Annotations Target="FuelOrderService.FuelOrders/priority">
+                <Annotation Term="Common.ValueListWithFixedValues" Bool="true"/>
+                <Annotation Term="Common.Text" Path="priority">
+                    <Annotation Term="UI.TextArrangement" EnumMember="UI.TextArrangementType/TextOnly"/>
+                </Annotation>
+                <Annotation Term="Common.Label" String="Priority"/>
+                <Annotation Term="Validation.AllowedValues">
+                    <Collection>
+                        <Record Type="Validation.AllowedValue">
+                            <Annotation Term="Core.SymbolicName" String="Normal"/>
+                            <PropertyValue Property="Value" String="Normal"/>
+                        </Record>
+                        <Record Type="Validation.AllowedValue">
+                            <Annotation Term="Core.SymbolicName" String="High"/>
+                            <PropertyValue Property="Value" String="High"/>
+                        </Record>
+                        <Record Type="Validation.AllowedValue">
+                            <Annotation Term="Core.SymbolicName" String="Urgent"/>
+                            <PropertyValue Property="Value" String="Urgent"/>
+                        </Record>
+                    </Collection>
+                </Annotation>
+            </Annotations>
+            <Annotations Target="FuelOrderService.FuelOrders/status">
+                <Annotation Term="Common.Text" Path="status">
+                    <Annotation Term="UI.TextArrangement" EnumMember="UI.TextArrangementType/TextOnly"/>
+                </Annotation>
+                <Annotation Term="Common.FieldControl" EnumMember="Common.FieldControlType/ReadOnly"/>
+                <Annotation Term="Common.Label" String="Status"/>
+                <Annotation Term="Validation.AllowedValues">
+                    <Collection>
+                        <Record Type="Validation.AllowedValue">
+                            <Annotation Term="Core.SymbolicName" String="Draft"/>
+                            <PropertyValue Property="Value" String="Draft"/>
+                        </Record>
+                        <Record Type="Validation.AllowedValue">
+                            <Annotation Term="Core.SymbolicName" String="Submitted"/>
+                            <PropertyValue Property="Value" String="Submitted"/>
+                        </Record>
+                        <Record Type="Validation.AllowedValue">
+                            <Annotation Term="Core.SymbolicName" String="Confirmed"/>
+                            <PropertyValue Property="Value" String="Confirmed"/>
+                        </Record>
+                        <Record Type="Validation.AllowedValue">
+                            <Annotation Term="Core.SymbolicName" String="InProgress"/>
+                            <PropertyValue Property="Value" String="InProgress"/>
+                        </Record>
+                        <Record Type="Validation.AllowedValue">
+                            <Annotation Term="Core.SymbolicName" String="Delivered"/>
+                            <PropertyValue Property="Value" String="Delivered"/>
+                        </Record>
+                        <Record Type="Validation.AllowedValue">
+                            <Annotation Term="Core.SymbolicName" String="Cancelled"/>
+                            <PropertyValue Property="Value" String="Cancelled"/>
+                        </Record>
+                    </Collection>
+                </Annotation>
+            </Annotations>
+            <Annotations Target="FuelOrderService.FuelOrders/s4_po_number">
+                <Annotation Term="Common.FieldControl" EnumMember="Common.FieldControlType/ReadOnly"/>
+                <Annotation Term="Common.Label" String="PO Number"/>
+            </Annotations>
+            <Annotations Target="FuelOrderService.FuelOrders/s4_po_item">
+                <Annotation Term="Common.FieldControl" EnumMember="Common.FieldControlType/ReadOnly"/>
+                <Annotation Term="Common.Label" String="PO Item"/>
+            </Annotations>
+            <Annotations Target="FuelOrderService.FuelOrders/notes">
+                <Annotation Term="UI.MultiLineText" Bool="true"/>
+                <Annotation Term="Common.Label" String="Notes"/>
+            </Annotations>
+            <Annotations Target="FuelOrderService.FuelOrders/cancelled_reason">
+                <Annotation Term="UI.MultiLineText" Bool="true"/>
+                <Annotation Term="Common.Label" String="Cancellation Reason"/>
+            </Annotations>
+            <Annotations Target="FuelOrderService.FuelOrders/cancelled_by">
+                <Annotation Term="Common.FieldControl" EnumMember="Common.FieldControlType/ReadOnly"/>
+                <Annotation Term="Common.Label" String="Cancelled By"/>
+            </Annotations>
+            <Annotations Target="FuelOrderService.FuelOrders/cancelled_at">
+                <Annotation Term="Common.FieldControl" EnumMember="Common.FieldControlType/ReadOnly"/>
+                <Annotation Term="Common.Label" String="Cancelled At"/>
+            </Annotations>
+            <Annotations Target="FuelOrderService.FuelOrders/statusCriticality">
+                <Annotation Term="Core.Computed" Bool="true"/>
+            </Annotations>
+            <Annotations Target="FuelOrderService.FuelOrders/priorityCriticality">
+                <Annotation Term="Core.Computed" Bool="true"/>
+            </Annotations>
+            <Annotations Target="FuelOrderService.FuelOrders/IsActiveEntity">
+                <Annotation Term="UI.Hidden" Bool="true"/>
+            </Annotations>
+            <Annotations Target="FuelOrderService.FuelOrders/HasActiveEntity">
+                <Annotation Term="UI.Hidden" Bool="true"/>
+            </Annotations>
+            <Annotations Target="FuelOrderService.FuelOrders/HasDraftEntity">
+                <Annotation Term="UI.Hidden" Bool="true"/>
+            </Annotations>
+            <Annotations Target="FuelOrderService.FuelOrders/DraftAdministrativeData">
+                <Annotation Term="UI.Hidden" Bool="true"/>
+            </Annotations>
+            <Annotations Target="FuelOrderService.FuelDeliveries">
+                <Annotation Term="UI.HeaderInfo">
+                    <Record Type="UI.HeaderInfoType">
+                        <PropertyValue Property="TypeName" String="Delivery"/>
+                        <PropertyValue Property="TypeNamePlural" String="Deliveries"/>
+                        <PropertyValue Property="Title">
+                            <Record Type="UI.DataField">
+                                <PropertyValue Property="Value" Path="delivery_number"/>
+                            </Record>
+                        </PropertyValue>
+                        <PropertyValue Property="Description">
+                            <Record Type="UI.DataField">
+                                <PropertyValue Property="Value" Path="status"/>
+                            </Record>
+                        </PropertyValue>
+                    </Record>
+                </Annotation>
+                <Annotation Term="UI.LineItem">
+                    <Collection>
+                        <Record Type="UI.DataField">
+                            <PropertyValue Property="Value" Path="delivery_number"/>
+                            <PropertyValue Property="Label" String="Delivery Number"/>
+                            <Annotation Term="UI.Importance" EnumMember="UI.ImportanceType/High"/>
+                        </Record>
+                        <Record Type="UI.DataField">
+                            <PropertyValue Property="Value" Path="delivery_date"/>
+                            <PropertyValue Property="Label" String="Date"/>
+                            <Annotation Term="UI.Importance" EnumMember="UI.ImportanceType/High"/>
+                        </Record>
+                        <Record Type="UI.DataField">
+                            <PropertyValue Property="Value" Path="delivery_time"/>
+                            <PropertyValue Property="Label" String="Time"/>
+                            <Annotation Term="UI.Importance" EnumMember="UI.ImportanceType/Medium"/>
+                        </Record>
+                        <Record Type="UI.DataField">
+                            <PropertyValue Property="Value" Path="delivered_quantity"/>
+                            <PropertyValue Property="Label" String="Delivered (kg)"/>
+                            <Annotation Term="UI.Importance" EnumMember="UI.ImportanceType/High"/>
+                        </Record>
+                        <Record Type="UI.DataField">
+                            <PropertyValue Property="Value" Path="temperature"/>
+                            <PropertyValue Property="Label" String="Temp (C)"/>
+                            <Annotation Term="UI.Importance" EnumMember="UI.ImportanceType/Low"/>
+                        </Record>
+                        <Record Type="UI.DataField">
+                            <PropertyValue Property="Value" Path="density"/>
+                            <PropertyValue Property="Label" String="Density"/>
+                            <Annotation Term="UI.Importance" EnumMember="UI.ImportanceType/Low"/>
+                        </Record>
+                        <Record Type="UI.DataField">
+                            <PropertyValue Property="Value" Path="status"/>
+                            <PropertyValue Property="Label" String="Status"/>
+                            <PropertyValue Property="Criticality" Path="statusCriticality"/>
+                            <Annotation Term="UI.Importance" EnumMember="UI.ImportanceType/High"/>
+                        </Record>
+                        <Record Type="UI.DataField">
+                            <PropertyValue Property="Value" Path="variance_flag"/>
+                            <PropertyValue Property="Label" String="Variance"/>
+                            <PropertyValue Property="Criticality" Path="varianceCriticality"/>
+                            <Annotation Term="UI.Importance" EnumMember="UI.ImportanceType/Medium"/>
+                        </Record>
+                        <Record Type="UI.DataField">
+                            <PropertyValue Property="Value" Path="s4_gr_number"/>
+                            <PropertyValue Property="Label" String="GR Number"/>
+                            <Annotation Term="UI.Importance" EnumMember="UI.ImportanceType/Low"/>
+                        </Record>
+                        <Record Type="UI.DataField">
+                            <PropertyValue Property="Value" Path="pilot_name"/>
+                            <PropertyValue Property="Label" String="Pilot"/>
+                            <Annotation Term="UI.Importance" EnumMember="UI.ImportanceType/Low"/>
+                        </Record>
+                        <Record Type="UI.DataField">
+                            <PropertyValue Property="Value" Path="ground_crew_name"/>
+                            <PropertyValue Property="Label" String="Ground Crew"/>
+                            <Annotation Term="UI.Importance" EnumMember="UI.ImportanceType/Low"/>
+                        </Record>
+                    </Collection>
+                </Annotation>
+                <Annotation Term="UI.Facets">
+                    <Collection>
+                        <Record Type="UI.ReferenceFacet">
+                            <PropertyValue Property="Target" AnnotationPath="@UI.FieldGroup#DeliveryDetails"/>
+                            <PropertyValue Property="Label" String="Delivery Details"/>
+                        </Record>
+                        <Record Type="UI.ReferenceFacet">
+                            <PropertyValue Property="Target" AnnotationPath="@UI.FieldGroup#QualityMeasurements"/>
+                            <PropertyValue Property="Label" String="Quality Measurements"/>
+                        </Record>
+                        <Record Type="UI.ReferenceFacet">
+                            <PropertyValue Property="Target" AnnotationPath="@UI.FieldGroup#Signatures"/>
+                            <PropertyValue Property="Label" String="Signatures"/>
+                        </Record>
+                        <Record Type="UI.ReferenceFacet">
+                            <PropertyValue Property="Target" AnnotationPath="@UI.FieldGroup#S4HANAReferences"/>
+                            <PropertyValue Property="Label" String="S/4HANA References"/>
+                        </Record>
+                        <Record Type="UI.ReferenceFacet">
+                            <PropertyValue Property="Target" AnnotationPath="@UI.FieldGroup#Variance"/>
+                            <PropertyValue Property="Label" String="Variance"/>
+                        </Record>
+                    </Collection>
+                </Annotation>
+                <Annotation Term="UI.FieldGroup" Qualifier="DeliveryDetails">
+                    <Record Type="UI.FieldGroupType">
+                        <PropertyValue Property="Label" String="Delivery Details"/>
+                        <PropertyValue Property="Data">
+                            <Collection>
+                                <Record Type="UI.DataField">
+                                    <PropertyValue Property="Value" Path="delivery_number"/>
+                                    <PropertyValue Property="Label" String="Delivery Number"/>
+                                </Record>
+                                <Record Type="UI.DataField">
+                                    <PropertyValue Property="Value" Path="delivery_date"/>
+                                    <PropertyValue Property="Label" String="Delivery Date"/>
+                                </Record>
+                                <Record Type="UI.DataField">
+                                    <PropertyValue Property="Value" Path="delivery_time"/>
+                                    <PropertyValue Property="Label" String="Delivery Time"/>
+                                </Record>
+                                <Record Type="UI.DataField">
+                                    <PropertyValue Property="Value" Path="delivered_quantity"/>
+                                    <PropertyValue Property="Label" String="Delivered Quantity (kg)"/>
+                                </Record>
+                                <Record Type="UI.DataField">
+                                    <PropertyValue Property="Value" Path="vehicle_id"/>
+                                    <PropertyValue Property="Label" String="Vehicle ID"/>
+                                </Record>
+                                <Record Type="UI.DataField">
+                                    <PropertyValue Property="Value" Path="driver_name"/>
+                                    <PropertyValue Property="Label" String="Driver Name"/>
+                                </Record>
+                                <Record Type="UI.DataField">
+                                    <PropertyValue Property="Value" Path="status"/>
+                                    <PropertyValue Property="Label" String="Status"/>
+                                </Record>
+                            </Collection>
+                        </PropertyValue>
+                    </Record>
+                </Annotation>
+                <Annotation Term="UI.FieldGroup" Qualifier="QualityMeasurements">
+                    <Record Type="UI.FieldGroupType">
+                        <PropertyValue Property="Label" String="Quality Measurements"/>
+                        <PropertyValue Property="Data">
+                            <Collection>
+                                <Record Type="UI.DataField">
+                                    <PropertyValue Property="Value" Path="temperature"/>
+                                    <PropertyValue Property="Label" String="Temperature (C)"/>
+                                </Record>
+                                <Record Type="UI.DataField">
+                                    <PropertyValue Property="Value" Path="density"/>
+                                    <PropertyValue Property="Label" String="Density (kg/L)"/>
+                                </Record>
+                                <Record Type="UI.DataField">
+                                    <PropertyValue Property="Value" Path="temperature_corrected_qty"/>
+                                    <PropertyValue Property="Label" String="Temperature Corrected Qty (kg)"/>
+                                </Record>
+                            </Collection>
+                        </PropertyValue>
+                    </Record>
+                </Annotation>
+                <Annotation Term="UI.FieldGroup" Qualifier="Signatures">
+                    <Record Type="UI.FieldGroupType">
+                        <PropertyValue Property="Label" String="Digital Signatures"/>
+                        <PropertyValue Property="Data">
+                            <Collection>
+                                <Record Type="UI.DataField">
+                                    <PropertyValue Property="Value" Path="pilot_name"/>
+                                    <PropertyValue Property="Label" String="Pilot Name"/>
+                                </Record>
+                                <Record Type="UI.DataField">
+                                    <PropertyValue Property="Value" Path="ground_crew_name"/>
+                                    <PropertyValue Property="Label" String="Ground Crew Name"/>
+                                </Record>
+                                <Record Type="UI.DataField">
+                                    <PropertyValue Property="Value" Path="signature_timestamp"/>
+                                    <PropertyValue Property="Label" String="Signature Time"/>
+                                </Record>
+                                <Record Type="UI.DataField">
+                                    <PropertyValue Property="Value" Path="signature_location"/>
+                                    <PropertyValue Property="Label" String="Location"/>
+                                </Record>
+                            </Collection>
+                        </PropertyValue>
+                    </Record>
+                </Annotation>
+                <Annotation Term="UI.FieldGroup" Qualifier="S4HANAReferences">
+                    <Record Type="UI.FieldGroupType">
+                        <PropertyValue Property="Label" String="S/4HANA References"/>
+                        <PropertyValue Property="Data">
+                            <Collection>
+                                <Record Type="UI.DataField">
+                                    <PropertyValue Property="Value" Path="s4_gr_number"/>
+                                    <PropertyValue Property="Label" String="Goods Receipt Number"/>
+                                </Record>
+                                <Record Type="UI.DataField">
+                                    <PropertyValue Property="Value" Path="s4_gr_year"/>
+                                    <PropertyValue Property="Label" String="GR Year"/>
+                                </Record>
+                                <Record Type="UI.DataField">
+                                    <PropertyValue Property="Value" Path="s4_gr_item"/>
+                                    <PropertyValue Property="Label" String="GR Item"/>
+                                </Record>
+                            </Collection>
+                        </PropertyValue>
+                    </Record>
+                </Annotation>
+                <Annotation Term="UI.FieldGroup" Qualifier="Variance">
+                    <Record Type="UI.FieldGroupType">
+                        <PropertyValue Property="Label" String="Quantity Variance"/>
+                        <PropertyValue Property="Data">
+                            <Collection>
+                                <Record Type="UI.DataField">
+                                    <PropertyValue Property="Value" Path="quantity_variance"/>
+                                    <PropertyValue Property="Label" String="Variance (kg)"/>
+                                </Record>
+                                <Record Type="UI.DataField">
+                                    <PropertyValue Property="Value" Path="variance_percentage"/>
+                                    <PropertyValue Property="Label" String="Variance (%)"/>
+                                </Record>
+                                <Record Type="UI.DataField">
+                                    <PropertyValue Property="Value" Path="variance_flag"/>
+                                    <PropertyValue Property="Label" String="Variance Flag"/>
+                                </Record>
+                                <Record Type="UI.DataField">
+                                    <PropertyValue Property="Value" Path="variance_reason"/>
+                                    <PropertyValue Property="Label" String="Variance Reason"/>
+                                </Record>
+                            </Collection>
+                        </PropertyValue>
+                    </Record>
+                </Annotation>
+            </Annotations>
+            <Annotations Target="FuelOrderService.EntityContainer/FuelDeliveries">
+                <Annotation Term="Common.DraftNode">
+                    <Record Type="Common.DraftNodeType">
+                        <PropertyValue Property="PreparationAction" String="FuelOrderService.draftPrepare"/>
+                    </Record>
+                </Annotation>
+            </Annotations>
+            <Annotations Target="FuelOrderService.FuelDeliveries/ID">
+                <Annotation Term="UI.Hidden" Bool="true"/>
+                <Annotation Term="Core.ComputedDefaultValue" Bool="true"/>
+            </Annotations>
+            <Annotations Target="FuelOrderService.FuelDeliveries/created_at">
+                <Annotation Term="Core.Computed" Bool="true"/>
+            </Annotations>
+            <Annotations Target="FuelOrderService.FuelDeliveries/created_by">
+                <Annotation Term="Core.Computed" Bool="true"/>
+            </Annotations>
+            <Annotations Target="FuelOrderService.FuelDeliveries/modified_at">
+                <Annotation Term="Core.Computed" Bool="true"/>
+            </Annotations>
+            <Annotations Target="FuelOrderService.FuelDeliveries/modified_by">
+                <Annotation Term="Core.Computed" Bool="true"/>
+            </Annotations>
+            <Annotations Target="FuelOrderService.FuelDeliveries/order_ID">
+                <Annotation Term="Common.FieldControl" EnumMember="Common.FieldControlType/Mandatory"/>
+            </Annotations>
+            <Annotations Target="FuelOrderService.FuelDeliveries/delivery_number">
+                <Annotation Term="Common.FieldControl" EnumMember="Common.FieldControlType/ReadOnly"/>
+                <Annotation Term="Common.Label" String="Delivery Number"/>
+            </Annotations>
+            <Annotations Target="FuelOrderService.FuelDeliveries/delivery_date">
+                <Annotation Term="Common.Label" String="Delivery Date"/>
+                <Annotation Term="Common.FieldControl" EnumMember="Common.FieldControlType/Mandatory"/>
+            </Annotations>
+            <Annotations Target="FuelOrderService.FuelDeliveries/delivery_time">
+                <Annotation Term="Common.Label" String="Delivery Time"/>
+                <Annotation Term="Common.FieldControl" EnumMember="Common.FieldControlType/Mandatory"/>
+            </Annotations>
+            <Annotations Target="FuelOrderService.FuelDeliveries/delivered_quantity">
+                <Annotation Term="Common.Label" String="Delivered Qty (kg)"/>
+                <Annotation Term="Common.FieldControl" EnumMember="Common.FieldControlType/Mandatory"/>
+            </Annotations>
+            <Annotations Target="FuelOrderService.FuelDeliveries/temperature">
+                <Annotation Term="Common.Label" String="Temperature (C)"/>
+                <Annotation Term="Validation.Minimum" Int="-40"/>
+                <Annotation Term="Validation.Maximum" Int="50"/>
+            </Annotations>
+            <Annotations Target="FuelOrderService.FuelDeliveries/density">
+                <Annotation Term="Common.Label" String="Density (kg/L)"/>
+                <Annotation Term="Validation.Minimum" Float="0.775"/>
+                <Annotation Term="Validation.Maximum" Float="0.84"/>
+            </Annotations>
+            <Annotations Target="FuelOrderService.FuelDeliveries/temperature_corrected_qty">
+                <Annotation Term="Common.Label" String="Corrected Qty (kg)"/>
+            </Annotations>
+            <Annotations Target="FuelOrderService.FuelDeliveries/vehicle_id">
+                <Annotation Term="Common.Label" String="Vehicle ID"/>
+            </Annotations>
+            <Annotations Target="FuelOrderService.FuelDeliveries/driver_name">
+                <Annotation Term="Common.Label" String="Driver Name"/>
+            </Annotations>
+            <Annotations Target="FuelOrderService.FuelDeliveries/pilot_name">
+                <Annotation Term="Common.Label" String="Pilot Name"/>
+            </Annotations>
+            <Annotations Target="FuelOrderService.FuelDeliveries/ground_crew_name">
+                <Annotation Term="Common.Label" String="Ground Crew"/>
+            </Annotations>
+            <Annotations Target="FuelOrderService.FuelDeliveries/signature_timestamp">
+                <Annotation Term="Common.FieldControl" EnumMember="Common.FieldControlType/ReadOnly"/>
+                <Annotation Term="Common.Label" String="Signature Time"/>
+            </Annotations>
+            <Annotations Target="FuelOrderService.FuelDeliveries/signature_location">
+                <Annotation Term="Common.Label" String="Location"/>
+            </Annotations>
+            <Annotations Target="FuelOrderService.FuelDeliveries/s4_gr_number">
+                <Annotation Term="Common.FieldControl" EnumMember="Common.FieldControlType/ReadOnly"/>
+                <Annotation Term="Common.Label" String="GR Number"/>
+            </Annotations>
+            <Annotations Target="FuelOrderService.FuelDeliveries/s4_gr_year">
+                <Annotation Term="Common.FieldControl" EnumMember="Common.FieldControlType/ReadOnly"/>
+                <Annotation Term="Common.Label" String="GR Year"/>
+            </Annotations>
+            <Annotations Target="FuelOrderService.FuelDeliveries/s4_gr_item">
+                <Annotation Term="Common.FieldControl" EnumMember="Common.FieldControlType/ReadOnly"/>
+                <Annotation Term="Common.Label" String="GR Item"/>
+            </Annotations>
+            <Annotations Target="FuelOrderService.FuelDeliveries/status">
+                <Annotation Term="Common.Label" String="Status"/>
+                <Annotation Term="Validation.AllowedValues">
+                    <Collection>
+                        <Record Type="Validation.AllowedValue">
+                            <Annotation Term="Core.SymbolicName" String="Pending"/>
+                            <PropertyValue Property="Value" String="Pending"/>
+                        </Record>
+                        <Record Type="Validation.AllowedValue">
+                            <Annotation Term="Core.SymbolicName" String="Verified"/>
+                            <PropertyValue Property="Value" String="Verified"/>
+                        </Record>
+                        <Record Type="Validation.AllowedValue">
+                            <Annotation Term="Core.SymbolicName" String="Posted"/>
+                            <PropertyValue Property="Value" String="Posted"/>
+                        </Record>
+                        <Record Type="Validation.AllowedValue">
+                            <Annotation Term="Core.SymbolicName" String="Disputed"/>
+                            <PropertyValue Property="Value" String="Disputed"/>
+                        </Record>
+                    </Collection>
+                </Annotation>
+            </Annotations>
+            <Annotations Target="FuelOrderService.FuelDeliveries/quantity_variance">
+                <Annotation Term="Common.FieldControl" EnumMember="Common.FieldControlType/ReadOnly"/>
+                <Annotation Term="Common.Label" String="Variance (kg)"/>
+            </Annotations>
+            <Annotations Target="FuelOrderService.FuelDeliveries/variance_percentage">
+                <Annotation Term="Common.FieldControl" EnumMember="Common.FieldControlType/ReadOnly"/>
+                <Annotation Term="Common.Label" String="Variance (%)"/>
+            </Annotations>
+            <Annotations Target="FuelOrderService.FuelDeliveries/variance_flag">
+                <Annotation Term="Common.FieldControl" EnumMember="Common.FieldControlType/ReadOnly"/>
+                <Annotation Term="Common.Label" String="Variance Flag"/>
+            </Annotations>
+            <Annotations Target="FuelOrderService.FuelDeliveries/variance_reason">
+                <Annotation Term="UI.MultiLineText" Bool="true"/>
+                <Annotation Term="Common.Label" String="Variance Reason"/>
+            </Annotations>
+            <Annotations Target="FuelOrderService.FuelDeliveries/statusCriticality">
+                <Annotation Term="Core.Computed" Bool="true"/>
+            </Annotations>
+            <Annotations Target="FuelOrderService.FuelDeliveries/varianceCriticality">
+                <Annotation Term="Core.Computed" Bool="true"/>
+            </Annotations>
+            <Annotations Target="FuelOrderService.FuelDeliveries/IsActiveEntity">
+                <Annotation Term="UI.Hidden" Bool="true"/>
+            </Annotations>
+            <Annotations Target="FuelOrderService.FuelDeliveries/HasActiveEntity">
+                <Annotation Term="UI.Hidden" Bool="true"/>
+            </Annotations>
+            <Annotations Target="FuelOrderService.FuelDeliveries/HasDraftEntity">
+                <Annotation Term="UI.Hidden" Bool="true"/>
+            </Annotations>
+            <Annotations Target="FuelOrderService.FuelDeliveries/DraftAdministrativeData">
+                <Annotation Term="UI.Hidden" Bool="true"/>
+            </Annotations>
+            <Annotations Target="FuelOrderService.FuelTickets">
+                <Annotation Term="UI.HeaderInfo">
+                    <Record Type="UI.HeaderInfoType">
+                        <PropertyValue Property="TypeName" String="Fuel Ticket"/>
+                        <PropertyValue Property="TypeNamePlural" String="Fuel Tickets"/>
+                        <PropertyValue Property="Title">
+                            <Record Type="UI.DataField">
+                                <PropertyValue Property="Value" Path="ticket_number"/>
+                            </Record>
+                        </PropertyValue>
+                        <PropertyValue Property="Description">
+                            <Record Type="UI.DataField">
+                                <PropertyValue Property="Value" Path="status"/>
+                            </Record>
+                        </PropertyValue>
+                    </Record>
+                </Annotation>
+                <Annotation Term="UI.LineItem">
+                    <Collection>
+                        <Record Type="UI.DataField">
+                            <PropertyValue Property="Value" Path="ticket_number"/>
+                            <PropertyValue Property="Label" String="Ticket Number"/>
+                            <Annotation Term="UI.Importance" EnumMember="UI.ImportanceType/High"/>
+                        </Record>
+                        <Record Type="UI.DataField">
+                            <PropertyValue Property="Value" Path="internal_number"/>
+                            <PropertyValue Property="Label" String="Internal Number"/>
+                            <Annotation Term="UI.Importance" EnumMember="UI.ImportanceType/Medium"/>
+                        </Record>
+                        <Record Type="UI.DataField">
+                            <PropertyValue Property="Value" Path="aircraft_reg"/>
+                            <PropertyValue Property="Label" String="Aircraft Reg"/>
+                            <Annotation Term="UI.Importance" EnumMember="UI.ImportanceType/High"/>
+                        </Record>
+                        <Record Type="UI.DataField">
+                            <PropertyValue Property="Value" Path="flight_number"/>
+                            <PropertyValue Property="Label" String="Flight"/>
+                            <Annotation Term="UI.Importance" EnumMember="UI.ImportanceType/High"/>
+                        </Record>
+                        <Record Type="UI.DataField">
+                            <PropertyValue Property="Value" Path="quantity"/>
+                            <PropertyValue Property="Label" String="Quantity (kg)"/>
+                            <Annotation Term="UI.Importance" EnumMember="UI.ImportanceType/High"/>
+                        </Record>
+                        <Record Type="UI.DataField">
+                            <PropertyValue Property="Value" Path="delivery_timestamp"/>
+                            <PropertyValue Property="Label" String="Delivery Time"/>
+                            <Annotation Term="UI.Importance" EnumMember="UI.ImportanceType/Medium"/>
+                        </Record>
+                        <Record Type="UI.DataField">
+                            <PropertyValue Property="Value" Path="status"/>
+                            <PropertyValue Property="Label" String="Status"/>
+                            <PropertyValue Property="Criticality" Path="statusCriticality"/>
+                            <Annotation Term="UI.Importance" EnumMember="UI.ImportanceType/High"/>
+                        </Record>
+                        <Record Type="UI.DataField">
+                            <PropertyValue Property="Value" Path="verified_by"/>
+                            <PropertyValue Property="Label" String="Verified By"/>
+                            <Annotation Term="UI.Importance" EnumMember="UI.ImportanceType/Low"/>
+                        </Record>
+                        <Record Type="UI.DataField">
+                            <PropertyValue Property="Value" Path="verified_at"/>
+                            <PropertyValue Property="Label" String="Verified At"/>
+                            <Annotation Term="UI.Importance" EnumMember="UI.ImportanceType/Low"/>
+                        </Record>
+                    </Collection>
+                </Annotation>
+                <Annotation Term="UI.Facets">
+                    <Collection>
+                        <Record Type="UI.ReferenceFacet">
+                            <PropertyValue Property="Target" AnnotationPath="@UI.FieldGroup#TicketDetails"/>
+                            <PropertyValue Property="Label" String="Ticket Details"/>
+                        </Record>
+                        <Record Type="UI.ReferenceFacet">
+                            <PropertyValue Property="Target" AnnotationPath="@UI.FieldGroup#Verification"/>
+                            <PropertyValue Property="Label" String="Verification"/>
+                        </Record>
+                    </Collection>
+                </Annotation>
+                <Annotation Term="UI.FieldGroup" Qualifier="TicketDetails">
+                    <Record Type="UI.FieldGroupType">
+                        <PropertyValue Property="Label" String="Ticket Details"/>
+                        <PropertyValue Property="Data">
+                            <Collection>
+                                <Record Type="UI.DataField">
+                                    <PropertyValue Property="Value" Path="ticket_number"/>
+                                    <PropertyValue Property="Label" String="Ticket Number"/>
+                                </Record>
+                                <Record Type="UI.DataField">
+                                    <PropertyValue Property="Value" Path="internal_number"/>
+                                    <PropertyValue Property="Label" String="Internal Number"/>
+                                </Record>
+                                <Record Type="UI.DataField">
+                                    <PropertyValue Property="Value" Path="aircraft_reg"/>
+                                    <PropertyValue Property="Label" String="Aircraft Registration"/>
+                                </Record>
+                                <Record Type="UI.DataField">
+                                    <PropertyValue Property="Value" Path="flight_number"/>
+                                    <PropertyValue Property="Label" String="Flight Number"/>
+                                </Record>
+                                <Record Type="UI.DataField">
+                                    <PropertyValue Property="Value" Path="quantity"/>
+                                    <PropertyValue Property="Label" String="Quantity (kg)"/>
+                                </Record>
+                                <Record Type="UI.DataField">
+                                    <PropertyValue Property="Value" Path="uom_code"/>
+                                    <PropertyValue Property="Label" String="UoM"/>
+                                </Record>
+                                <Record Type="UI.DataField">
+                                    <PropertyValue Property="Value" Path="delivery_timestamp"/>
+                                    <PropertyValue Property="Label" String="Delivery Time"/>
+                                </Record>
+                                <Record Type="UI.DataField">
+                                    <PropertyValue Property="Value" Path="supplier_ticket_ref"/>
+                                    <PropertyValue Property="Label" String="Supplier Reference"/>
+                                </Record>
+                                <Record Type="UI.DataField">
+                                    <PropertyValue Property="Value" Path="status"/>
+                                    <PropertyValue Property="Label" String="Status"/>
+                                </Record>
+                            </Collection>
+                        </PropertyValue>
+                    </Record>
+                </Annotation>
+                <Annotation Term="UI.FieldGroup" Qualifier="Verification">
+                    <Record Type="UI.FieldGroupType">
+                        <PropertyValue Property="Label" String="Verification"/>
+                        <PropertyValue Property="Data">
+                            <Collection>
+                                <Record Type="UI.DataField">
+                                    <PropertyValue Property="Value" Path="verified_by"/>
+                                    <PropertyValue Property="Label" String="Verified By"/>
+                                </Record>
+                                <Record Type="UI.DataField">
+                                    <PropertyValue Property="Value" Path="verified_at"/>
+                                    <PropertyValue Property="Label" String="Verified At"/>
+                                </Record>
+                            </Collection>
+                        </PropertyValue>
+                    </Record>
+                </Annotation>
+            </Annotations>
+            <Annotations Target="FuelOrderService.EntityContainer/FuelTickets">
+                <Annotation Term="Common.DraftNode">
+                    <Record Type="Common.DraftNodeType">
+                        <PropertyValue Property="PreparationAction" String="FuelOrderService.draftPrepare"/>
+                    </Record>
+                </Annotation>
+            </Annotations>
+            <Annotations Target="FuelOrderService.FuelTickets/ID">
+                <Annotation Term="UI.Hidden" Bool="true"/>
+                <Annotation Term="Core.ComputedDefaultValue" Bool="true"/>
+            </Annotations>
+            <Annotations Target="FuelOrderService.FuelTickets/created_at">
+                <Annotation Term="Core.Computed" Bool="true"/>
+            </Annotations>
+            <Annotations Target="FuelOrderService.FuelTickets/created_by">
+                <Annotation Term="Core.Computed" Bool="true"/>
+            </Annotations>
+            <Annotations Target="FuelOrderService.FuelTickets/modified_at">
+                <Annotation Term="Core.Computed" Bool="true"/>
+            </Annotations>
+            <Annotations Target="FuelOrderService.FuelTickets/modified_by">
+                <Annotation Term="Core.Computed" Bool="true"/>
+            </Annotations>
+            <Annotations Target="FuelOrderService.FuelTickets/order_ID">
+                <Annotation Term="Common.FieldControl" EnumMember="Common.FieldControlType/Mandatory"/>
+            </Annotations>
+            <Annotations Target="FuelOrderService.FuelTickets/ticket_number">
+                <Annotation Term="Common.Label" String="Ticket Number"/>
+                <Annotation Term="Common.FieldControl" EnumMember="Common.FieldControlType/Mandatory"/>
+            </Annotations>
+            <Annotations Target="FuelOrderService.FuelTickets/internal_number">
+                <Annotation Term="Common.FieldControl" EnumMember="Common.FieldControlType/ReadOnly"/>
+                <Annotation Term="Common.Label" String="Internal Number"/>
+            </Annotations>
+            <Annotations Target="FuelOrderService.FuelTickets/aircraft_reg">
+                <Annotation Term="Common.Label" String="Aircraft Reg"/>
+            </Annotations>
+            <Annotations Target="FuelOrderService.FuelTickets/flight_number">
+                <Annotation Term="Common.Label" String="Flight"/>
+            </Annotations>
+            <Annotations Target="FuelOrderService.FuelTickets/quantity">
+                <Annotation Term="Common.Label" String="Quantity (kg)"/>
+                <Annotation Term="Common.FieldControl" EnumMember="Common.FieldControlType/Mandatory"/>
+            </Annotations>
+            <Annotations Target="FuelOrderService.FuelTickets/uom_code">
+                <Annotation Term="Common.Label" String="UoM"/>
+            </Annotations>
+            <Annotations Target="FuelOrderService.FuelTickets/delivery_timestamp">
+                <Annotation Term="Common.Label" String="Delivery Time"/>
+                <Annotation Term="Common.FieldControl" EnumMember="Common.FieldControlType/Mandatory"/>
+            </Annotations>
+            <Annotations Target="FuelOrderService.FuelTickets/supplier_ticket_ref">
+                <Annotation Term="Common.Label" String="Supplier Reference"/>
+            </Annotations>
+            <Annotations Target="FuelOrderService.FuelTickets/status">
+                <Annotation Term="Common.Label" String="Status"/>
+                <Annotation Term="Validation.AllowedValues">
+                    <Collection>
+                        <Record Type="Validation.AllowedValue">
+                            <Annotation Term="Core.SymbolicName" String="Open"/>
+                            <PropertyValue Property="Value" String="Open"/>
+                        </Record>
+                        <Record Type="Validation.AllowedValue">
+                            <Annotation Term="Core.SymbolicName" String="Attached"/>
+                            <PropertyValue Property="Value" String="Attached"/>
+                        </Record>
+                        <Record Type="Validation.AllowedValue">
+                            <Annotation Term="Core.SymbolicName" String="Verified"/>
+                            <PropertyValue Property="Value" String="Verified"/>
+                        </Record>
+                        <Record Type="Validation.AllowedValue">
+                            <Annotation Term="Core.SymbolicName" String="Closed"/>
+                            <PropertyValue Property="Value" String="Closed"/>
+                        </Record>
+                    </Collection>
+                </Annotation>
+            </Annotations>
+            <Annotations Target="FuelOrderService.FuelTickets/verified_by">
+                <Annotation Term="Common.FieldControl" EnumMember="Common.FieldControlType/ReadOnly"/>
+                <Annotation Term="Common.Label" String="Verified By"/>
+            </Annotations>
+            <Annotations Target="FuelOrderService.FuelTickets/verified_at">
+                <Annotation Term="Common.FieldControl" EnumMember="Common.FieldControlType/ReadOnly"/>
+                <Annotation Term="Common.Label" String="Verified At"/>
+            </Annotations>
+            <Annotations Target="FuelOrderService.FuelTickets/IsActiveEntity">
+                <Annotation Term="UI.Hidden" Bool="true"/>
+            </Annotations>
+            <Annotations Target="FuelOrderService.FuelTickets/HasActiveEntity">
+                <Annotation Term="UI.Hidden" Bool="true"/>
+            </Annotations>
+            <Annotations Target="FuelOrderService.FuelTickets/HasDraftEntity">
+                <Annotation Term="UI.Hidden" Bool="true"/>
+            </Annotations>
+            <Annotations Target="FuelOrderService.FuelTickets/DraftAdministrativeData">
+                <Annotation Term="UI.Hidden" Bool="true"/>
+            </Annotations>
+            <Annotations Target="FuelOrderService.Flights">
+                <Annotation Term="UI.HeaderInfo">
+                    <Record Type="UI.HeaderInfoType">
+                        <PropertyValue Property="TypeName" String="Flight"/>
+                        <PropertyValue Property="TypeNamePlural" String="Flights"/>
+                        <PropertyValue Property="Title">
+                            <Record Type="UI.DataField">
+                                <PropertyValue Property="Value" Path="flight_number"/>
+                            </Record>
+                        </PropertyValue>
+                        <PropertyValue Property="Description">
+                            <Record Type="UI.DataField">
+                                <PropertyValue Property="Value" Path="flight_date"/>
+                            </Record>
+                        </PropertyValue>
+                    </Record>
+                </Annotation>
+                <Annotation Term="UI.LineItem">
+                    <Collection>
+                        <Record Type="UI.DataField">
+                            <PropertyValue Property="Value" Path="flight_number"/>
+                            <PropertyValue Property="Label" String="Flight Number"/>
+                        </Record>
+                        <Record Type="UI.DataField">
+                            <PropertyValue Property="Value" Path="flight_date"/>
+                            <PropertyValue Property="Label" String="Date"/>
+                        </Record>
+                        <Record Type="UI.DataField">
+                            <PropertyValue Property="Value" Path="aircraft_type"/>
+                            <PropertyValue Property="Label" String="Aircraft Type"/>
+                        </Record>
+                        <Record Type="UI.DataField">
+                            <PropertyValue Property="Value" Path="aircraft_reg"/>
+                            <PropertyValue Property="Label" String="Registration"/>
+                        </Record>
+                        <Record Type="UI.DataField">
+                            <PropertyValue Property="Value" Path="origin_airport"/>
+                            <PropertyValue Property="Label" String="Origin"/>
+                        </Record>
+                        <Record Type="UI.DataField">
+                            <PropertyValue Property="Value" Path="destination_airport"/>
+                            <PropertyValue Property="Label" String="Destination"/>
+                        </Record>
+                        <Record Type="UI.DataField">
+                            <PropertyValue Property="Value" Path="scheduled_departure"/>
+                            <PropertyValue Property="Label" String="Departure"/>
+                        </Record>
+                        <Record Type="UI.DataField">
+                            <PropertyValue Property="Value" Path="scheduled_arrival"/>
+                            <PropertyValue Property="Label" String="Arrival"/>
+                        </Record>
+                        <Record Type="UI.DataField">
+                            <PropertyValue Property="Value" Path="status"/>
+                            <PropertyValue Property="Label" String="Status"/>
+                        </Record>
+                    </Collection>
+                </Annotation>
+            </Annotations>
+            <Annotations Target="FuelOrderService.EntityContainer/Flights">
+                <Annotation Term="Capabilities.DeleteRestrictions">
+                    <Record Type="Capabilities.DeleteRestrictionsType">
+                        <PropertyValue Property="Deletable" Bool="false"/>
+                    </Record>
+                </Annotation>
+                <Annotation Term="Capabilities.InsertRestrictions">
+                    <Record Type="Capabilities.InsertRestrictionsType">
+                        <PropertyValue Property="Insertable" Bool="false"/>
+                    </Record>
+                </Annotation>
+                <Annotation Term="Capabilities.UpdateRestrictions">
+                    <Record Type="Capabilities.UpdateRestrictionsType">
+                        <PropertyValue Property="Updatable" Bool="false"/>
+                    </Record>
+                </Annotation>
+            </Annotations>
+            <Annotations Target="FuelOrderService.Flights/ID">
+                <Annotation Term="UI.Hidden" Bool="true"/>
+                <Annotation Term="Core.ComputedDefaultValue" Bool="true"/>
+            </Annotations>
+            <Annotations Target="FuelOrderService.Flights/created_at">
+                <Annotation Term="Core.Computed" Bool="true"/>
+            </Annotations>
+            <Annotations Target="FuelOrderService.Flights/created_by">
+                <Annotation Term="Core.Computed" Bool="true"/>
+            </Annotations>
+            <Annotations Target="FuelOrderService.Flights/modified_at">
+                <Annotation Term="Core.Computed" Bool="true"/>
+            </Annotations>
+            <Annotations Target="FuelOrderService.Flights/modified_by">
+                <Annotation Term="Core.Computed" Bool="true"/>
+            </Annotations>
+            <Annotations Target="FuelOrderService.Flights/flight_number">
+                <Annotation Term="Common.Label" String="Flight Number"/>
+                <Annotation Term="Common.FieldControl" EnumMember="Common.FieldControlType/Mandatory"/>
+            </Annotations>
+            <Annotations Target="FuelOrderService.Flights/flight_date">
+                <Annotation Term="Common.Label" String="Date"/>
+                <Annotation Term="Common.FieldControl" EnumMember="Common.FieldControlType/Mandatory"/>
+            </Annotations>
+            <Annotations Target="FuelOrderService.Flights/aircraft_type">
+                <Annotation Term="Common.Label" String="Aircraft Type"/>
+            </Annotations>
+            <Annotations Target="FuelOrderService.Flights/aircraft_reg">
+                <Annotation Term="Common.Label" String="Registration"/>
+            </Annotations>
+            <Annotations Target="FuelOrderService.Flights/origin_airport">
+                <Annotation Term="Common.Label" String="Origin"/>
+                <Annotation Term="Common.FieldControl" EnumMember="Common.FieldControlType/Mandatory"/>
+            </Annotations>
+            <Annotations Target="FuelOrderService.Flights/destination_airport">
+                <Annotation Term="Common.Label" String="Destination"/>
+                <Annotation Term="Common.FieldControl" EnumMember="Common.FieldControlType/Mandatory"/>
+            </Annotations>
+            <Annotations Target="FuelOrderService.Flights/scheduled_departure">
+                <Annotation Term="Common.Label" String="Departure"/>
+            </Annotations>
+            <Annotations Target="FuelOrderService.Flights/scheduled_arrival">
+                <Annotation Term="Common.Label" String="Arrival"/>
+            </Annotations>
+            <Annotations Target="FuelOrderService.Flights/status">
+                <Annotation Term="Common.Label" String="Status"/>
+            </Annotations>
+            <Annotations Target="FuelOrderService.EntityContainer/Airports">
+                <Annotation Term="Capabilities.DeleteRestrictions">
+                    <Record Type="Capabilities.DeleteRestrictionsType">
+                        <PropertyValue Property="Deletable" Bool="false"/>
+                    </Record>
+                </Annotation>
+                <Annotation Term="Capabilities.InsertRestrictions">
+                    <Record Type="Capabilities.InsertRestrictionsType">
+                        <PropertyValue Property="Insertable" Bool="false"/>
+                    </Record>
+                </Annotation>
+                <Annotation Term="Capabilities.UpdateRestrictions">
+                    <Record Type="Capabilities.UpdateRestrictionsType">
+                        <PropertyValue Property="Updatable" Bool="false"/>
+                    </Record>
+                </Annotation>
+            </Annotations>
+            <Annotations Target="FuelOrderService.Airports/ID">
+                <Annotation Term="Core.ComputedDefaultValue" Bool="true"/>
+            </Annotations>
+            <Annotations Target="FuelOrderService.Airports/created_at">
+                <Annotation Term="Core.Computed" Bool="true"/>
+            </Annotations>
+            <Annotations Target="FuelOrderService.Airports/created_by">
+                <Annotation Term="Core.Computed" Bool="true"/>
+            </Annotations>
+            <Annotations Target="FuelOrderService.Airports/modified_at">
+                <Annotation Term="Core.Computed" Bool="true"/>
+            </Annotations>
+            <Annotations Target="FuelOrderService.Airports/modified_by">
+                <Annotation Term="Core.Computed" Bool="true"/>
+            </Annotations>
+            <Annotations Target="FuelOrderService.Airports/iata_code">
+                <Annotation Term="Common.FieldControl" EnumMember="Common.FieldControlType/Mandatory"/>
+            </Annotations>
+            <Annotations Target="FuelOrderService.Airports/airport_name">
+                <Annotation Term="Common.FieldControl" EnumMember="Common.FieldControlType/Mandatory"/>
+            </Annotations>
+            <Annotations Target="FuelOrderService.Airports/city">
+                <Annotation Term="Common.FieldControl" EnumMember="Common.FieldControlType/Mandatory"/>
+            </Annotations>
+            <Annotations Target="FuelOrderService.Airports/country_code">
+                <Annotation Term="Common.FieldControl" EnumMember="Common.FieldControlType/Mandatory"/>
+            </Annotations>
+            <Annotations Target="FuelOrderService.EntityContainer/Suppliers">
+                <Annotation Term="Capabilities.DeleteRestrictions">
+                    <Record Type="Capabilities.DeleteRestrictionsType">
+                        <PropertyValue Property="Deletable" Bool="false"/>
+                    </Record>
+                </Annotation>
+                <Annotation Term="Capabilities.InsertRestrictions">
+                    <Record Type="Capabilities.InsertRestrictionsType">
+                        <PropertyValue Property="Insertable" Bool="false"/>
+                    </Record>
+                </Annotation>
+                <Annotation Term="Capabilities.UpdateRestrictions">
+                    <Record Type="Capabilities.UpdateRestrictionsType">
+                        <PropertyValue Property="Updatable" Bool="false"/>
+                    </Record>
+                </Annotation>
+            </Annotations>
+            <Annotations Target="FuelOrderService.Suppliers/ID">
+                <Annotation Term="Core.ComputedDefaultValue" Bool="true"/>
+            </Annotations>
+            <Annotations Target="FuelOrderService.Suppliers/created_at">
+                <Annotation Term="Core.Computed" Bool="true"/>
+            </Annotations>
+            <Annotations Target="FuelOrderService.Suppliers/created_by">
+                <Annotation Term="Core.Computed" Bool="true"/>
+            </Annotations>
+            <Annotations Target="FuelOrderService.Suppliers/modified_at">
+                <Annotation Term="Core.Computed" Bool="true"/>
+            </Annotations>
+            <Annotations Target="FuelOrderService.Suppliers/modified_by">
+                <Annotation Term="Core.Computed" Bool="true"/>
+            </Annotations>
+            <Annotations Target="FuelOrderService.Suppliers/supplier_code">
+                <Annotation Term="Common.FieldControl" EnumMember="Common.FieldControlType/Mandatory"/>
+            </Annotations>
+            <Annotations Target="FuelOrderService.Suppliers/supplier_name">
+                <Annotation Term="Common.FieldControl" EnumMember="Common.FieldControlType/Mandatory"/>
+            </Annotations>
+            <Annotations Target="FuelOrderService.Suppliers/supplier_type">
+                <Annotation Term="Common.FieldControl" EnumMember="Common.FieldControlType/Mandatory"/>
+            </Annotations>
+            <Annotations Target="FuelOrderService.Suppliers/country_code">
+                <Annotation Term="Common.FieldControl" EnumMember="Common.FieldControlType/Mandatory"/>
+            </Annotations>
+            <Annotations Target="FuelOrderService.EntityContainer/Contracts">
+                <Annotation Term="Capabilities.DeleteRestrictions">
+                    <Record Type="Capabilities.DeleteRestrictionsType">
+                        <PropertyValue Property="Deletable" Bool="false"/>
+                    </Record>
+                </Annotation>
+                <Annotation Term="Capabilities.InsertRestrictions">
+                    <Record Type="Capabilities.InsertRestrictionsType">
+                        <PropertyValue Property="Insertable" Bool="false"/>
+                    </Record>
+                </Annotation>
+                <Annotation Term="Capabilities.UpdateRestrictions">
+                    <Record Type="Capabilities.UpdateRestrictionsType">
+                        <PropertyValue Property="Updatable" Bool="false"/>
+                    </Record>
+                </Annotation>
+            </Annotations>
+            <Annotations Target="FuelOrderService.Contracts/ID">
+                <Annotation Term="Core.ComputedDefaultValue" Bool="true"/>
+            </Annotations>
+            <Annotations Target="FuelOrderService.Contracts/created_at">
+                <Annotation Term="Core.Computed" Bool="true"/>
+            </Annotations>
+            <Annotations Target="FuelOrderService.Contracts/created_by">
+                <Annotation Term="Core.Computed" Bool="true"/>
+            </Annotations>
+            <Annotations Target="FuelOrderService.Contracts/modified_at">
+                <Annotation Term="Core.Computed" Bool="true"/>
+            </Annotations>
+            <Annotations Target="FuelOrderService.Contracts/modified_by">
+                <Annotation Term="Core.Computed" Bool="true"/>
+            </Annotations>
+            <Annotations Target="FuelOrderService.Contracts/contract_number">
+                <Annotation Term="Common.FieldControl" EnumMember="Common.FieldControlType/Mandatory"/>
+            </Annotations>
+            <Annotations Target="FuelOrderService.Contracts/contract_name">
+                <Annotation Term="Common.FieldControl" EnumMember="Common.FieldControlType/Mandatory"/>
+            </Annotations>
+            <Annotations Target="FuelOrderService.Contracts/valid_from">
+                <Annotation Term="Common.FieldControl" EnumMember="Common.FieldControlType/Mandatory"/>
+            </Annotations>
+            <Annotations Target="FuelOrderService.Contracts/valid_to">
+                <Annotation Term="Common.FieldControl" EnumMember="Common.FieldControlType/Mandatory"/>
+            </Annotations>
+            <Annotations Target="FuelOrderService.Contracts/contract_type">
+                <Annotation Term="Common.FieldControl" EnumMember="Common.FieldControlType/Mandatory"/>
+            </Annotations>
+            <Annotations Target="FuelOrderService.Contracts/price_type">
+                <Annotation Term="Common.FieldControl" EnumMember="Common.FieldControlType/Mandatory"/>
+            </Annotations>
+            <Annotations Target="FuelOrderService.Contracts/currency_code">
+                <Annotation Term="Common.FieldControl" EnumMember="Common.FieldControlType/Mandatory"/>
+            </Annotations>
+            <Annotations Target="FuelOrderService.EntityContainer/Products">
+                <Annotation Term="Capabilities.DeleteRestrictions">
+                    <Record Type="Capabilities.DeleteRestrictionsType">
+                        <PropertyValue Property="Deletable" Bool="false"/>
+                    </Record>
+                </Annotation>
+                <Annotation Term="Capabilities.InsertRestrictions">
+                    <Record Type="Capabilities.InsertRestrictionsType">
+                        <PropertyValue Property="Insertable" Bool="false"/>
+                    </Record>
+                </Annotation>
+                <Annotation Term="Capabilities.UpdateRestrictions">
+                    <Record Type="Capabilities.UpdateRestrictionsType">
+                        <PropertyValue Property="Updatable" Bool="false"/>
+                    </Record>
+                </Annotation>
+            </Annotations>
+            <Annotations Target="FuelOrderService.Products/ID">
+                <Annotation Term="Core.ComputedDefaultValue" Bool="true"/>
+            </Annotations>
+            <Annotations Target="FuelOrderService.Products/created_at">
+                <Annotation Term="Core.Computed" Bool="true"/>
+            </Annotations>
+            <Annotations Target="FuelOrderService.Products/created_by">
+                <Annotation Term="Core.Computed" Bool="true"/>
+            </Annotations>
+            <Annotations Target="FuelOrderService.Products/modified_at">
+                <Annotation Term="Core.Computed" Bool="true"/>
+            </Annotations>
+            <Annotations Target="FuelOrderService.Products/modified_by">
+                <Annotation Term="Core.Computed" Bool="true"/>
+            </Annotations>
+            <Annotations Target="FuelOrderService.Products/product_code">
+                <Annotation Term="Common.FieldControl" EnumMember="Common.FieldControlType/Mandatory"/>
+            </Annotations>
+            <Annotations Target="FuelOrderService.Products/product_name">
+                <Annotation Term="Common.FieldControl" EnumMember="Common.FieldControlType/Mandatory"/>
+            </Annotations>
+            <Annotations Target="FuelOrderService.Products/product_type">
+                <Annotation Term="Common.FieldControl" EnumMember="Common.FieldControlType/Mandatory"/>
+            </Annotations>
+            <Annotations Target="FuelOrderService.Products/specification">
+                <Annotation Term="Common.FieldControl" EnumMember="Common.FieldControlType/Mandatory"/>
+            </Annotations>
+            <Annotations Target="FuelOrderService.Products/uom_code">
+                <Annotation Term="Common.FieldControl" EnumMember="Common.FieldControlType/Mandatory"/>
+            </Annotations>
+            <Annotations Target="FuelOrderService.EntityContainer/Aircraft">
+                <Annotation Term="Capabilities.DeleteRestrictions">
+                    <Record Type="Capabilities.DeleteRestrictionsType">
+                        <PropertyValue Property="Deletable" Bool="false"/>
+                    </Record>
+                </Annotation>
+                <Annotation Term="Capabilities.InsertRestrictions">
+                    <Record Type="Capabilities.InsertRestrictionsType">
+                        <PropertyValue Property="Insertable" Bool="false"/>
+                    </Record>
+                </Annotation>
+                <Annotation Term="Capabilities.UpdateRestrictions">
+                    <Record Type="Capabilities.UpdateRestrictionsType">
+                        <PropertyValue Property="Updatable" Bool="false"/>
+                    </Record>
+                </Annotation>
+            </Annotations>
+            <Annotations Target="FuelOrderService.Aircraft/created_at">
+                <Annotation Term="Core.Computed" Bool="true"/>
+            </Annotations>
+            <Annotations Target="FuelOrderService.Aircraft/created_by">
+                <Annotation Term="Core.Computed" Bool="true"/>
+            </Annotations>
+            <Annotations Target="FuelOrderService.Aircraft/modified_at">
+                <Annotation Term="Core.Computed" Bool="true"/>
+            </Annotations>
+            <Annotations Target="FuelOrderService.Aircraft/modified_by">
+                <Annotation Term="Core.Computed" Bool="true"/>
+            </Annotations>
+            <Annotations Target="FuelOrderService.EntityContainer/Manufacturers">
+                <Annotation Term="Capabilities.DeleteRestrictions">
+                    <Record Type="Capabilities.DeleteRestrictionsType">
+                        <PropertyValue Property="Deletable" Bool="false"/>
+                    </Record>
+                </Annotation>
+                <Annotation Term="Capabilities.InsertRestrictions">
+                    <Record Type="Capabilities.InsertRestrictionsType">
+                        <PropertyValue Property="Insertable" Bool="false"/>
+                    </Record>
+                </Annotation>
+                <Annotation Term="Capabilities.UpdateRestrictions">
+                    <Record Type="Capabilities.UpdateRestrictionsType">
+                        <PropertyValue Property="Updatable" Bool="false"/>
+                    </Record>
+                </Annotation>
+            </Annotations>
+            <Annotations Target="FuelOrderService.Manufacturers/created_at">
+                <Annotation Term="Core.Computed" Bool="true"/>
+            </Annotations>
+            <Annotations Target="FuelOrderService.Manufacturers/created_by">
+                <Annotation Term="Core.Computed" Bool="true"/>
+            </Annotations>
+            <Annotations Target="FuelOrderService.Manufacturers/modified_at">
+                <Annotation Term="Core.Computed" Bool="true"/>
+            </Annotations>
+            <Annotations Target="FuelOrderService.Manufacturers/modified_by">
+                <Annotation Term="Core.Computed" Bool="true"/>
+            </Annotations>
+            <Annotations Target="FuelOrderService.EntityContainer/Countries">
+                <Annotation Term="Capabilities.DeleteRestrictions">
+                    <Record Type="Capabilities.DeleteRestrictionsType">
+                        <PropertyValue Property="Deletable" Bool="false"/>
+                    </Record>
+                </Annotation>
+                <Annotation Term="Capabilities.InsertRestrictions">
+                    <Record Type="Capabilities.InsertRestrictionsType">
+                        <PropertyValue Property="Insertable" Bool="false"/>
+                    </Record>
+                </Annotation>
+                <Annotation Term="Capabilities.UpdateRestrictions">
+                    <Record Type="Capabilities.UpdateRestrictionsType">
+                        <PropertyValue Property="Updatable" Bool="false"/>
+                    </Record>
+                </Annotation>
+            </Annotations>
+            <Annotations Target="FuelOrderService.EntityContainer/Currencies">
+                <Annotation Term="Capabilities.DeleteRestrictions">
+                    <Record Type="Capabilities.DeleteRestrictionsType">
+                        <PropertyValue Property="Deletable" Bool="false"/>
+                    </Record>
+                </Annotation>
+                <Annotation Term="Capabilities.InsertRestrictions">
+                    <Record Type="Capabilities.InsertRestrictionsType">
+                        <PropertyValue Property="Insertable" Bool="false"/>
+                    </Record>
+                </Annotation>
+                <Annotation Term="Capabilities.UpdateRestrictions">
+                    <Record Type="Capabilities.UpdateRestrictionsType">
+                        <PropertyValue Property="Updatable" Bool="false"/>
+                    </Record>
+                </Annotation>
+            </Annotations>
+            <Annotations Target="FuelOrderService.EntityContainer/Plants">
+                <Annotation Term="Capabilities.DeleteRestrictions">
+                    <Record Type="Capabilities.DeleteRestrictionsType">
+                        <PropertyValue Property="Deletable" Bool="false"/>
+                    </Record>
+                </Annotation>
+                <Annotation Term="Capabilities.InsertRestrictions">
+                    <Record Type="Capabilities.InsertRestrictionsType">
+                        <PropertyValue Property="Insertable" Bool="false"/>
+                    </Record>
+                </Annotation>
+                <Annotation Term="Capabilities.UpdateRestrictions">
+                    <Record Type="Capabilities.UpdateRestrictionsType">
+                        <PropertyValue Property="Updatable" Bool="false"/>
+                    </Record>
+                </Annotation>
+            </Annotations>
+            <Annotations Target="FuelOrderService.EntityContainer/UnitsOfMeasure">
+                <Annotation Term="Capabilities.DeleteRestrictions">
+                    <Record Type="Capabilities.DeleteRestrictionsType">
+                        <PropertyValue Property="Deletable" Bool="false"/>
+                    </Record>
+                </Annotation>
+                <Annotation Term="Capabilities.InsertRestrictions">
+                    <Record Type="Capabilities.InsertRestrictionsType">
+                        <PropertyValue Property="Insertable" Bool="false"/>
+                    </Record>
+                </Annotation>
+                <Annotation Term="Capabilities.UpdateRestrictions">
+                    <Record Type="Capabilities.UpdateRestrictionsType">
+                        <PropertyValue Property="Updatable" Bool="false"/>
+                    </Record>
+                </Annotation>
+            </Annotations>
+            <Annotations Target="FuelOrderService.EntityContainer/StationLookup">
+                <Annotation Term="Capabilities.DeleteRestrictions">
+                    <Record Type="Capabilities.DeleteRestrictionsType">
+                        <PropertyValue Property="Deletable" Bool="false"/>
+                    </Record>
+                </Annotation>
+                <Annotation Term="Capabilities.InsertRestrictions">
+                    <Record Type="Capabilities.InsertRestrictionsType">
+                        <PropertyValue Property="Insertable" Bool="false"/>
+                    </Record>
+                </Annotation>
+                <Annotation Term="Capabilities.UpdateRestrictions">
+                    <Record Type="Capabilities.UpdateRestrictionsType">
+                        <PropertyValue Property="Updatable" Bool="false"/>
+                    </Record>
+                </Annotation>
+            </Annotations>
+            <Annotations Target="FuelOrderService.StationLookup/station_code">
+                <Annotation Term="Common.FieldControl" EnumMember="Common.FieldControlType/Mandatory"/>
+            </Annotations>
+            <Annotations Target="FuelOrderService.StationLookup/product_ID">
+                <Annotation Term="UI.Hidden" Bool="true"/>
+                <Annotation Term="Core.ComputedDefaultValue" Bool="true"/>
+            </Annotations>
+            <Annotations Target="FuelOrderService.StationLookup/contract_ID">
+                <Annotation Term="UI.Hidden" Bool="true"/>
+                <Annotation Term="Core.ComputedDefaultValue" Bool="true"/>
+            </Annotations>
+            <Annotations Target="FuelOrderService.StationLookup/airport_ID">
+                <Annotation Term="UI.Hidden" Bool="true"/>
+            </Annotations>
+            <Annotations Target="FuelOrderService.StationLookup/supplier_ID">
+                <Annotation Term="UI.Hidden" Bool="true"/>
+            </Annotations>
+            <Annotations Target="FuelOrderService.StationLookup/airport_name">
+                <Annotation Term="Common.Label" String="Airport"/>
+                <Annotation Term="Common.FieldControl" EnumMember="Common.FieldControlType/Mandatory"/>
+            </Annotations>
+            <Annotations Target="FuelOrderService.StationLookup/supplier_name">
+                <Annotation Term="Common.Label" String="Supplier"/>
+                <Annotation Term="Common.FieldControl" EnumMember="Common.FieldControlType/Mandatory"/>
+            </Annotations>
+            <Annotations Target="FuelOrderService.StationLookup/supplier_type">
+                <Annotation Term="Common.FieldControl" EnumMember="Common.FieldControlType/Mandatory"/>
+            </Annotations>
+            <Annotations Target="FuelOrderService.StationLookup/contract_number">
+                <Annotation Term="Common.Label" String="Contract"/>
+                <Annotation Term="Common.FieldControl" EnumMember="Common.FieldControlType/Mandatory"/>
+            </Annotations>
+            <Annotations Target="FuelOrderService.StationLookup/product_name">
+                <Annotation Term="Common.Label" String="Product"/>
+                <Annotation Term="Common.FieldControl" EnumMember="Common.FieldControlType/Mandatory"/>
+            </Annotations>
+            <Annotations Target="FuelOrderService.StationLookup/specification">
+                <Annotation Term="Common.FieldControl" EnumMember="Common.FieldControlType/Mandatory"/>
+            </Annotations>
+            <Annotations Target="FuelOrderService.generateOrderNumber(Edm.String,Edm.Date)/stationCode">
+                <Annotation Term="Core.OptionalParameter">
+                    <Record Type="Core.OptionalParameterType"/>
+                </Annotation>
+            </Annotations>
+            <Annotations Target="FuelOrderService.generateOrderNumber(Edm.String,Edm.Date)/orderDate">
+                <Annotation Term="Core.OptionalParameter">
+                    <Record Type="Core.OptionalParameterType"/>
+                </Annotation>
+            </Annotations>
+            <Annotations Target="FuelOrderService.generateDeliveryNumber(Edm.String,Edm.Date)/stationCode">
+                <Annotation Term="Core.OptionalParameter">
+                    <Record Type="Core.OptionalParameterType"/>
+                </Annotation>
+            </Annotations>
+            <Annotations Target="FuelOrderService.generateDeliveryNumber(Edm.String,Edm.Date)/deliveryDate">
+                <Annotation Term="Core.OptionalParameter">
+                    <Record Type="Core.OptionalParameterType"/>
+                </Annotation>
+            </Annotations>
+            <Annotations Target="FuelOrderService.getOrdersByStation(Edm.String,Edm.Date,Edm.Date)/stationCode">
+                <Annotation Term="Core.OptionalParameter">
+                    <Record Type="Core.OptionalParameterType"/>
+                </Annotation>
+            </Annotations>
+            <Annotations Target="FuelOrderService.getOrdersByStation(Edm.String,Edm.Date,Edm.Date)/fromDate">
+                <Annotation Term="Core.OptionalParameter">
+                    <Record Type="Core.OptionalParameterType"/>
+                </Annotation>
+            </Annotations>
+            <Annotations Target="FuelOrderService.getOrdersByStation(Edm.String,Edm.Date,Edm.Date)/toDate">
+                <Annotation Term="Core.OptionalParameter">
+                    <Record Type="Core.OptionalParameterType"/>
+                </Annotation>
+            </Annotations>
+            <Annotations Target="FuelOrderService.getOrdersBySupplier(Edm.Guid,Edm.Date,Edm.Date)/supplierId">
+                <Annotation Term="Core.OptionalParameter">
+                    <Record Type="Core.OptionalParameterType"/>
+                </Annotation>
+            </Annotations>
+            <Annotations Target="FuelOrderService.getOrdersBySupplier(Edm.Guid,Edm.Date,Edm.Date)/fromDate">
+                <Annotation Term="Core.OptionalParameter">
+                    <Record Type="Core.OptionalParameterType"/>
+                </Annotation>
+            </Annotations>
+            <Annotations Target="FuelOrderService.getOrdersBySupplier(Edm.Guid,Edm.Date,Edm.Date)/toDate">
+                <Annotation Term="Core.OptionalParameter">
+                    <Record Type="Core.OptionalParameterType"/>
+                </Annotation>
+            </Annotations>
+            <Annotations Target="FuelOrderService.CONTRACT_LOCATIONS/ID">
+                <Annotation Term="Core.ComputedDefaultValue" Bool="true"/>
+            </Annotations>
+            <Annotations Target="FuelOrderService.CONTRACT_LOCATIONS/created_at">
+                <Annotation Term="Core.Computed" Bool="true"/>
+            </Annotations>
+            <Annotations Target="FuelOrderService.CONTRACT_LOCATIONS/created_by">
+                <Annotation Term="Core.Computed" Bool="true"/>
+            </Annotations>
+            <Annotations Target="FuelOrderService.CONTRACT_LOCATIONS/modified_at">
+                <Annotation Term="Core.Computed" Bool="true"/>
+            </Annotations>
+            <Annotations Target="FuelOrderService.CONTRACT_LOCATIONS/modified_by">
+                <Annotation Term="Core.Computed" Bool="true"/>
+            </Annotations>
+            <Annotations Target="FuelOrderService.CONTRACT_LOCATIONS/contract_ID">
+                <Annotation Term="Common.FieldControl" EnumMember="Common.FieldControlType/Mandatory"/>
+            </Annotations>
+            <Annotations Target="FuelOrderService.CONTRACT_LOCATIONS/valid_from">
+                <Annotation Term="Common.FieldControl" EnumMember="Common.FieldControlType/Mandatory"/>
+            </Annotations>
+            <Annotations Target="FuelOrderService.CONTRACT_PRODUCTS/ID">
+                <Annotation Term="Core.ComputedDefaultValue" Bool="true"/>
+            </Annotations>
+            <Annotations Target="FuelOrderService.CONTRACT_PRODUCTS/created_at">
+                <Annotation Term="Core.Computed" Bool="true"/>
+            </Annotations>
+            <Annotations Target="FuelOrderService.CONTRACT_PRODUCTS/created_by">
+                <Annotation Term="Core.Computed" Bool="true"/>
+            </Annotations>
+            <Annotations Target="FuelOrderService.CONTRACT_PRODUCTS/modified_at">
+                <Annotation Term="Core.Computed" Bool="true"/>
+            </Annotations>
+            <Annotations Target="FuelOrderService.CONTRACT_PRODUCTS/modified_by">
+                <Annotation Term="Core.Computed" Bool="true"/>
+            </Annotations>
+            <Annotations Target="FuelOrderService.CONTRACT_PRODUCTS/contract_ID">
+                <Annotation Term="Common.FieldControl" EnumMember="Common.FieldControlType/Mandatory"/>
+            </Annotations>
+            <Annotations Target="FuelOrderService.CONTRACT_PRODUCTS/product_ID">
+                <Annotation Term="Common.FieldControl" EnumMember="Common.FieldControlType/Mandatory"/>
+            </Annotations>
+            <Annotations Target="FuelOrderService.DraftAdministrativeData">
+                <Annotation Term="Common.Label" String="Draft Administrative Data"/>
+            </Annotations>
+            <Annotations Target="FuelOrderService.DraftAdministrativeData/DraftUUID">
+                <Annotation Term="UI.Hidden" Bool="true"/>
+                <Annotation Term="Common.Label" String="Draft (Technical ID)"/>
+                <Annotation Term="Core.ComputedDefaultValue" Bool="true"/>
+            </Annotations>
+            <Annotations Target="FuelOrderService.DraftAdministrativeData/CreationDateTime">
+                <Annotation Term="Common.Label" String="Draft Created On"/>
+            </Annotations>
+            <Annotations Target="FuelOrderService.DraftAdministrativeData/CreatedByUser">
+                <Annotation Term="Common.Label" String="Draft Created By"/>
+            </Annotations>
+            <Annotations Target="FuelOrderService.DraftAdministrativeData/DraftIsCreatedByMe">
+                <Annotation Term="UI.Hidden" Bool="true"/>
+                <Annotation Term="Common.Label" String="Draft Created By Me"/>
+            </Annotations>
+            <Annotations Target="FuelOrderService.DraftAdministrativeData/LastChangeDateTime">
+                <Annotation Term="Common.Label" String="Draft Last Changed On"/>
+            </Annotations>
+            <Annotations Target="FuelOrderService.DraftAdministrativeData/LastChangedByUser">
+                <Annotation Term="Common.Label" String="Draft Last Changed By"/>
+            </Annotations>
+            <Annotations Target="FuelOrderService.DraftAdministrativeData/InProcessByUser">
+                <Annotation Term="Common.Label" String="Draft In Process By"/>
+            </Annotations>
+            <Annotations Target="FuelOrderService.DraftAdministrativeData/DraftIsProcessedByMe">
+                <Annotation Term="UI.Hidden" Bool="true"/>
+                <Annotation Term="Common.Label" String="Draft In Process By Me"/>
+            </Annotations>
+        </Schema>
+    </edmx:DataServices>
+</edmx:Edmx>
