@@ -24,7 +24,7 @@
         }
       },
       "mainService": {
-        "uri": "/odata/v4/orders/",
+        "uri": "/odata/v4/tickets/",
         "type": "OData",
         "settings": {
           "annotations": [
